@@ -1,6 +1,8 @@
 import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
+import yueqi.Yueqi
+
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -14,6 +16,8 @@ object Main {
 
     var df = ssql.sql("SELECT * FROM Wildfire")
     df.show()
+    Yueqi.testprint()
+
 
   }
 }
