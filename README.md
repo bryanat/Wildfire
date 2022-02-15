@@ -1,5 +1,8 @@
 # Wildfire (P2 Spark)
 
+# Agile/Scrum
+- https://trello.com/b/YjETnJ2h/p2-scrum-agile
+
 ### Project Members (Group A)
 - Bryan Boyett
 - Yueqi Peng
