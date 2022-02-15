@@ -28,6 +28,7 @@
 - Wildfire<>Time<>>Weather 
   - Connect Wildfire dataset with Weather API using unix Timestamp to connect the two datasets (like a foreign key)
   - Timestamp provides granularity down to seconds but can simplify to daily granularity, as no real value gained from minutes overs daily 
+  - An alternative third dataset option, US Wildfires, was chosen as it took the best features from the two winning datasets we narrowed it down to from all the datasets we looked through, along with an additional unique approach: by using the time field in US Wildfires as a sort of foreign key and primary key we could connect any additional dataset that had a time field. We are connecting additional Weather data to use as features for the Wildfire targets.
 
 # P2 Primary Objective
 - ## Summarize Query Layer
