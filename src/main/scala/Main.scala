@@ -5,6 +5,7 @@ import abby.Whatever
 import yueqi.Yueqi
 import org.apache.spark.sql.DataFrameWriter
 // import org.apache.spark.sql.SparkSession.implicits._
+import dataops.DataOps
 
 
 object Main {
@@ -18,8 +19,10 @@ object Main {
     // val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").config("spark.executor.memory", "4g").enableHiveSupport().getOrCreate()
     val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").enableHiveSupport().getOrCreate()
     
-    Whatever.testprint()
-    Yueqi.testprint()
+    //Whatever.testprint()
+    //Yueqi.testprint()
+    
+
 
   }
 }
