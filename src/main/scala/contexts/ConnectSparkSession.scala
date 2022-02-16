@@ -1,15 +1,10 @@
-import org.apache.spark._
-import org.apache.spark.streaming._
+package contexts
+
 import org.apache.spark.sql._
-import abby.Whatever
-import yueqi.Yueqi
-import org.apache.spark.sql.DataFrameWriter
-// import org.apache.spark.sql.SparkSession.implicits._
 
-
-object Main {
-  def main(args: Array[String]): Unit = {
-    System.setProperty("hadoop.home.dir", "C:\\hadoop")
+// Want to rename these but for sake of time right now the names remain
+object ConnectSparkSession {
+  def connect(): SparkSession = {
     // val sconf = new SparkConf().setMaster("local[4]").setAppName("Wildfire").setSparkHome("C:\\Spark")
     // sconf.set("spark.driver.memory", "4g") 
     
@@ -17,9 +12,6 @@ object Main {
     
     // val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").config("spark.executor.memory", "4g").enableHiveSupport().getOrCreate()
     val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").enableHiveSupport().getOrCreate()
-    
-    Whatever.testprint()
-    Yueqi.testprint()
-
+    ssql
   }
 }
