@@ -62,7 +62,6 @@ object GetWeather {
     bw.close()
     }
 
-
     def dateConversion(year:String, doy:Int): Unit={
 
     }
