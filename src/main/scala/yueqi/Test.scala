@@ -2,7 +2,6 @@ package yueqi
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
-import scala.io.StdIn.readLine
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 import org.apache.spark.ml.linalg.Vectors
@@ -13,7 +12,7 @@ import org.apache.spark.sql._
 import org.apache.spark.storage.StorageLevel
 
 
-object Test {
+object GetWeather {
     System.setProperty("hadoop.home.dir", "C:\\hadoop")
     val spark1 = SparkSession.builder()
       .appName("WildFire")
@@ -23,15 +22,13 @@ object Test {
     spark1.sparkContext.setLogLevel("ERROR")
 
 
-    def getDayMonth(): Unit={
+    def getWeather(): Unit={
 
     import spark1.implicits._
 
-    val df = spark1.read.option("multiline", true).parquet("dataset/fire1.parquet")
-    df.createOrReplaceTempView("firetable")
-
-    spark1.sql("SELECT * FROM firetable").show()
-
+    val df = spark1.read.option("multiline", true).parquet("dataset/fireG.parquet")
+    // df.createOrReplaceTempView("firetable")
+    // spark1.sql("SELECT * FROM firetable where FIRE_YEAR = '2005'").show()
     val array = df.select("LATITUDE", "LONGITUDE", "FIRE_YEAR", "DISCOVERY_DOY").collect().foreach({row=>
     var lat = row(0).toString.toDouble
     var lon = row(1).toString.toDouble
@@ -43,15 +40,20 @@ object Test {
     //var unixSec = dateMap.getOrElse(row(2).toString, 0) +  86400 * row(3).toString.toInt
     var unixSec = 1104559200
     //println(unixSec)
-    var start = unixSec-86400*3
     var end = unixSec+86400*3
     //var api = 
-    var url = s"http://history.openweathermap.org/data/2.5/history/city?lat=$lat&lon=$lon&type=hour&start=$start&end=$end&appid=api"
-    var tempData = scala.io.Source.fromURL(url).mkString
+    //var url = s"http://history.openweathermap.org/data/2.5/history/city?lat=$lat&lon=$lon&type=hour&start=$start&end=$end&appid=api"
+    var url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/37.86055556%2C-120.08305556/2013-08-15/2013-08-16?unitGroup=metric&include=days&key=HADFHX3EXLYNL59LEPWA5P5E2&contentType=json"
+    var tempData = scala.io.Source.fromURL(url)
     println(tempData)
     
     //0c46283b46a5e97cd91006313f6f08d7
     })
+    }
+
+    def writeWeather(): Unit = {
+
+
     }
 }
 
