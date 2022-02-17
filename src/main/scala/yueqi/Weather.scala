@@ -58,6 +58,7 @@ object GetWeather {
     val bw = new BufferedWriter(new FileWriter(file))
     for (line <- weatherList) {
         bw.write(line)
+        bw.write("\n")
     }
     bw.close()
     }
