@@ -1,8 +1,8 @@
 import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
+import yueqi.GetWeather
 import abby.Whatever
-import yueqi.Yueqi
 import org.apache.spark.sql.DataFrameWriter
 // import org.apache.spark.sql.SparkSession.implicits._
 import dataops.DataOps
@@ -21,6 +21,11 @@ object Main {
     
     //Whatever.testprint()
     //Yueqi.testprint()
+
+    //val sconf = new SparkConf().setMaster("local[4]").setAppName("P2").setSparkHome("C:\\Spark")
+    //val sc = new SparkContext(sconf)
+
+    GetWeather.getWeather()
 
     // Test comment for a test commit for brandon to test pull request and merge master into brandon
     // Test comment two for test commit two
