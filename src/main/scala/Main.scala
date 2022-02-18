@@ -30,7 +30,8 @@ object Main {
     //GetWeather.getWeather("dataset/train/fireG1.parquet", "dataset/testweather3.csv")
     //Chisquare.fireSizeAndCause()
     //DataOps.createJSONFile()
-    Sampling.stratifiedSampling()
+    //Sampling.stratifiedSampling()
+    Sampling.randomSampling()
 
 
     // Test comment for a test commit for brandon to test pull request and merge master into brandon
