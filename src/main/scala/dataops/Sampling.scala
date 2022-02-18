@@ -20,6 +20,7 @@ object Sampling {
         val df = spark1.read.option("multiline", "true").parquet("dataset-offline/validation/fireComplete.parquet")
         //unlike the fractions in stratified sampling for each partition, the fraction in random sampling is applied to the entire dataset
         var fraction = 0.005
+        //you can specify an optional seed after fraction
         val sample = df.sample(fraction)
         sample.write.parquet("dataset-offline/train/sampled3")
     }
