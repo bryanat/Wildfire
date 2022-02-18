@@ -22,6 +22,7 @@ object Main {
     // val sconf = new SparkConf().setMaster("local[4]").setAppName("P2").setSparkHome("C:\\Spark")
     // val sc = new SparkContext(sconf)
     // val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").config("spark.executor.memory", "4g").enableHiveSupport().getOrCreate()
+
     // val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").enableHiveSupport().getOrCreate()
 
     //Master Main Space
@@ -32,12 +33,10 @@ object Main {
     DataOps.createJSONFile()
     //Sampling.stratifiedSampling()
     //Sampling.randomSampling()
-    //Abby's Main Space
-    //Whatever.testprint()
     //FireWeather.getWeather()
-
+    
     //Abby's Main Space
-    AbbysDataops.runSummaryStatements()
+    //AbbysDataops.runSummaryStatements()
 
     //Brandon's Main Space
 
