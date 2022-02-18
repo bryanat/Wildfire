@@ -20,4 +20,5 @@ def combineFireWeather() {
   var joinFW = fireDF.join(weatherDF, weatherDF("OBJECTID")===fireDF("OBJECTID"), "inner").select("FIRE_NAME", "FIRE_YEAR", "FIRE_SIZE_CLASS", "datetime", "tempmax", "precip")
     joinFW.show(100)
 }
+
 }

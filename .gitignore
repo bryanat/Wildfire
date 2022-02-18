@@ -1,8 +1,8 @@
 .bloop
-.bsp
-.idea
 .metals
 .vscode
+.bsp
+.idea
 dataset-offline
 metastore_db
 project
