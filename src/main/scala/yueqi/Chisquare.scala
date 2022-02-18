@@ -16,6 +16,8 @@ object Chisquare {
   def fireSizeAndState(): Unit={
 
   }
+
+
   def fireSizeAndCause(): Unit ={
     System.setProperty("hadoop.home.dir", "C:\\hadoop")
     val spark1 = SparkSession.builder()
@@ -35,20 +37,35 @@ object Chisquare {
     for(i<-0 to 13) {
        bigFire+=0
      }
-    //labels: small_fire = 0, big_fire = 1
-    //features: 1-13 cauase
+    //labels: class A-G
+    //features: causes 1-13
     var fireVector =  Seq(Tuple2(1, Vectors.dense(0,0,0)))
-    val file = spark1.read.parquet("dataset/classG.parquet")
+    val file = spark1.read.parquet("dataset/validation/fireComplete.parquet")
     file.show()
-    file.select("FIRE_SIZE", "STAT_CAUSE_CODE").collect.foreach({row=>
-        var size = row(0).toString
+    file.select("FIRE_SIZE_CLASS", "STAT_CAUSE_CODE").collect.foreach({row=>
+        var fireclass = row(0).toString
         var cause = row(1).toString
         var idx = cause.toDouble.toInt-1
-        if (size.toDouble<10000) {
+        if (fireclass=="A") {
             fireVector = fireVector :+ Tuple2(0, Vectors.sparse(13, Array(idx), Array(1)))
         }
+        else if (fireclass=="B") {
+            fireVector = fireVector :+ Tuple2(1, Vectors.sparse(13, Array(idx), Array(1)))
+        }
+        else if (fireclass=="C") {
+          fireVector = fireVector :+ Tuple2(2, Vectors.sparse(13, Array(idx), Array(1)))
+        }
+         else if (fireclass=="D") {
+            fireVector = fireVector :+ Tuple2(3, Vectors.sparse(13, Array(idx), Array(1)))
+        }
+         else if (fireclass=="E") {
+            fireVector = fireVector :+ Tuple2(4, Vectors.sparse(13, Array(idx), Array(1)))
+        }
+         else if (fireclass=="F") {
+            fireVector = fireVector :+ Tuple2(5, Vectors.sparse(13, Array(idx), Array(1)))
+        }
         else{
-          fireVector = fireVector :+ Tuple2(1, Vectors.sparse(13, Array(idx), Array(1)))
+          fireVector = fireVector :+ Tuple2(6, Vectors.sparse(13, Array(idx), Array(1)))
         }
         })
     // file.select("FIRE_SIZE",  "STAT_CAUSE_CODE").collect.foreach({row=>
@@ -67,9 +84,9 @@ object Chisquare {
     // print(fireVector.mkString)
     import spark1.implicits._
     val df = fireVector.drop(1).toDF("label", "features")
-val chi = ChiSquareTest.test(df, "features", "label").head
-println(s"pValues = ${chi.getAs[Vector](0)}")
-println(s"degreesOfFreedom ${chi.getSeq[Int](1).mkString("[", ",", "]")}")
-println(s"statistics ${chi.getAs[Vector](2)}")
+    val chi = ChiSquareTest.test(df, "features", "label").head
+    println(s"pValues = ${chi.getAs[Vector](0)}")
+    println(s"degreesOfFreedom ${chi.getSeq[Int](1).mkString("[", ",", "]")}")
+    println(s"statistics ${chi.getAs[Vector](2)}")
   }
 }
