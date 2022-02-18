@@ -1,13 +1,13 @@
 import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
-import yueqi.GetWeather
+import dataops.GetWeather
 import yueqi.Chisquare
 import abby.Whatever
 import org.apache.spark.sql.DataFrameWriter
 // import org.apache.spark.sql.SparkSession.implicits._
 import dataops.DataOps
-import yueqi.Sampling
+import dataops.Sampling
 
 
 object Main {
