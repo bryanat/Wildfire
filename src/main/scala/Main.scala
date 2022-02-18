@@ -15,34 +15,30 @@ import dataops.Sampling
 object Main {
   def main(args: Array[String]): Unit = {
     //System.setProperty("hadoop.home.dir", "C:\\hadoop")
+    
     // val sconf = new SparkConf().setMaster("local[4]").setAppName("Wildfire").setSparkHome("C:\\Spark")
     // sconf.set("spark.driver.memory", "4g") 
-    
     // val sc = new SparkContext(sconf)
-    
+    // val sconf = new SparkConf().setMaster("local[4]").setAppName("P2").setSparkHome("C:\\Spark")
+    // val sc = new SparkContext(sconf)
     // val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").config("spark.executor.memory", "4g").enableHiveSupport().getOrCreate()
-    //val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").enableHiveSupport().getOrCreate()
+
+    // val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").enableHiveSupport().getOrCreate()
+
+    //Master Main Space
+    //GetWeather.getWeather("dataset-online/train/fireG1.parquet", "dataset-offline/testweather3.csv")
     
-    //Whatever.testprint()
-    //Yueqi.testprint()
-
-    //val sconf = new SparkConf().setMaster("local[4]").setAppName("P2").setSparkHome("C:\\Spark")
-    //val sc = new SparkContext(sconf)
-
-    //GetWeather.getWeather("dataset/train/fireG10.parquet", "dataset/testweather.csv")
-    //Sampling.stratifiedSampling("dataset-online/train/fireG.parquet", "dataset-offline/train/sample4")
-    //Sampling.randomSampling("dataset-online/train/fireG.parquet", "dataset-offline/train/sample5")
-
-    //Yueqi's functions
+    //Yueqi's Main Space
     //Chisquare.fireSizeAndCause()
-    //FireWeather.combineFireWeather()
-    //Chisquare.fireSizeAndWeather()
+    DataOps.createJSONFile()
+    //Sampling.stratifiedSampling()
+    //Sampling.randomSampling()
+    //FireWeather.getWeather()
+    
+    //Abby's Main Space
+    //AbbysDataops.runSummaryStatements()
 
-
-
-    //Abby's functions
-   // AbbysDataops.runSummaryStatements()
-
+    //Brandon's Main Space
 
   }
 }
