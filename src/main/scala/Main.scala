@@ -30,18 +30,18 @@ object Main {
     //val sc = new SparkContext(sconf)
 
     //GetWeather.getWeather("dataset/train/fireG10.parquet", "dataset/testweather.csv")
+    //Sampling.stratifiedSampling("dataset-online/train/fireG.parquet", "dataset-offline/train/sample4")
+    //Sampling.randomSampling("dataset-online/train/fireG.parquet", "dataset-offline/train/sample5")
 
+    //Yueqi's functions
     //Chisquare.fireSizeAndCause()
-    //DataOps.createJSONFile()
-    //Sampling.stratifiedSampling()
-    //Sampling.randomSampling()
-    //FireWeather.getWeather()
+    //FireWeather.combineFireWeather()
+    //Chisquare.fireSizeAndWeather()
 
 
 
-    // Test comment for a test commit for brandon to test pull request and merge master into brandon
-    // Test comment two for test commit two
-    AbbysDataops.runSummaryStatements()
+    //Abby's functions
+   // AbbysDataops.runSummaryStatements()
 
 
   }
