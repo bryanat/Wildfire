@@ -1,12 +1,13 @@
 import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
-import yueqi.GetWeather
+import dataops.GetWeather
 import yueqi.Chisquare
 import abby.Whatever
 import org.apache.spark.sql.DataFrameWriter
 // import org.apache.spark.sql.SparkSession.implicits._
 import dataops.DataOps
+import dataops.Sampling
 
 
 object Main {
@@ -26,10 +27,12 @@ object Main {
     //val sconf = new SparkConf().setMaster("local[4]").setAppName("P2").setSparkHome("C:\\Spark")
     //val sc = new SparkContext(sconf)
 
-    GetWeather.getWeather("dataset/train/fireG10.parquet", "dataset/testweather.csv")
+    //GetWeather.getWeather("dataset/train/fireG1.parquet", "dataset/testweather3.csv")
     //Chisquare.fireSizeAndCause()
     //DataOps.createJSONFile()
-    //GetWeather.dateConversion("2010", 200)
+    //Sampling.stratifiedSampling()
+    Sampling.randomSampling()
+
 
     // Test comment for a test commit for brandon to test pull request and merge master into brandon
     // Test comment two for test commit two

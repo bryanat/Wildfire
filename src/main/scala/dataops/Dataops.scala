@@ -29,10 +29,10 @@ object DataOps {
       "STAT_CAUSE_CODE",
       "FIRE_NAME",
       "OBJECTID")
-      .limit(10)
+      .limit(1)
     
 
-    df_Wildfire_G.write.parquet("dataset/train/fireG10")
+    df_Wildfire_G.write.parquet("dataset/train/fireG1")
   }
 
 
