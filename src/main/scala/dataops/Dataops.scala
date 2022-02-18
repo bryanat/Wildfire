@@ -14,7 +14,7 @@ object DataOps {
   // Code to generate .JSON or .Parquet Files from the 2.6GB json main file
   // need to create object outside main for SparkSession and import SparkSession
   def createJSONFile() = {
-    val df_Wildfire = ssql.read.option("multiline","true").parquet("dataset/validation/fireComplete.parquet")
+    val df_Wildfire = ssql.read.option("multiline","true").parquet("dataset/train/fireG.parquet")
     var df_Wildfire_G = df_Wildfire.select(
       "FIRE_SIZE_CLASS",
       "FIRE_SIZE",
@@ -29,10 +29,10 @@ object DataOps {
       "STAT_CAUSE_CODE",
       "FIRE_NAME",
       "OBJECTID")
-      .filter(df_Wildfire("FIRE_SIZE_CLASS") === "G")
+      .limit(1)
     
 
-    df_Wildfire_G.write.parquet("dataset/train/fireG")
+    df_Wildfire_G.write.parquet("dataset/train/fireG1")
   }
 
 
