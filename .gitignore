@@ -3,7 +3,7 @@
 .idea
 .metals
 .vscode
-dataset
+dataset-offline
 metastore_db
 project
 spark-warehouse
