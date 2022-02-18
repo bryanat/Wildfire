@@ -11,32 +11,33 @@ import org.apache.spark.ml.stat.ChiSquareTest
 //the chi square test determines whether there is a strong correlation between categorical features tested against a label
 
 object Chisquare {
-
-
-  def fireSizeAndState(): Unit={
-
-  }
-
-
-  def fireSizeAndCause(): Unit ={
     System.setProperty("hadoop.home.dir", "C:\\hadoop")
     val spark1 = SparkSession.builder()
       .appName("WildFire")
       .config("spark.master", "local") 
       .enableHiveSupport()
-      .getOrCreate()
+      .getOrCreate() 
 
-    // are fire size and cause correlated
 
+  def fireSizeAndWeather(): Unit={
+    //avg tempmax, dew
+    val firedf = spark1.read.parquet("dataset/train/stratifiedSampleAll2.parquet")
+    var weatherdf = spark1.read.parquet("dataset/train/testweather3.csv")
     
-    var smallFire = ArrayBuffer[Double]()
-    var bigFire = ArrayBuffer[Double]()
-    for(i<-0 to 13) {
-       smallFire+=0
-     }
-    for(i<-0 to 13) {
-       bigFire+=0
-     }
+
+
+  }
+
+//null hypothesis: fire size class and cause of fires are unrelated
+  def fireSizeAndCause(): Unit ={
+    // var smallFire = ArrayBuffer[Double]()
+    // var bigFire = ArrayBuffer[Double]()
+    // for(i<-0 to 13) {
+    //    smallFire+=0
+    //  }
+    // for(i<-0 to 13) {
+    //    bigFire+=0
+    //  }
     //labels: class A-G
     //features: causes 1-13
     var fireVector =  Seq(Tuple2(1, Vectors.dense(0,0,0)))
