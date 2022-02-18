@@ -40,7 +40,7 @@ object Chisquare {
     //labels: class A-G
     //features: causes 1-13
     var fireVector =  Seq(Tuple2(1, Vectors.dense(0,0,0)))
-    val file = spark1.read.parquet("dataset/train/stratifiedSampleAll2.parquet")
+    val file = spark1.read.parquet("dataset-online/train/stratifiedSampleAll2.parquet")
     file.show()
     file.select("FIRE_SIZE_CLASS", "STAT_CAUSE_CODE").collect.foreach({row=>
         var fireclass = row(0).toString
