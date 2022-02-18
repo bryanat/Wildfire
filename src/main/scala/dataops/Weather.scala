@@ -1,9 +1,5 @@
-package yueqi
-import scala.collection.mutable.ArrayBuffer
+package dataops
 import scala.io.Source
-import org.apache.spark.ml.linalg.Vectors
-// import org.apache.spark.ml.feature.LabeledPoint
-import org.apache.spark.sql.types.DoubleType
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql._
 import org.apache.spark.storage.StorageLevel
