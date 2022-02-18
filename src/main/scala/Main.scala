@@ -8,6 +8,7 @@ import abby.Whatever
 import org.apache.spark.sql.DataFrameWriter
 // import org.apache.spark.sql.SparkSession.implicits._
 import dataops.DataOps
+import abby.AbbysDataops
 import dataops.Sampling
 
 
@@ -28,7 +29,8 @@ object Main {
     //val sconf = new SparkConf().setMaster("local[4]").setAppName("P2").setSparkHome("C:\\Spark")
     //val sc = new SparkContext(sconf)
 
-    GetWeather.getWeather("dataset/train/fireG.parquet", "dataset/train/weatherG.csv")
+    //GetWeather.getWeather("dataset/train/fireG10.parquet", "dataset/testweather.csv")
+
     //Chisquare.fireSizeAndCause()
     //DataOps.createJSONFile()
     //Sampling.stratifiedSampling()
@@ -39,6 +41,7 @@ object Main {
 
     // Test comment for a test commit for brandon to test pull request and merge master into brandon
     // Test comment two for test commit two
+    AbbysDataops.runSummaryStatements()
 
 
   }
