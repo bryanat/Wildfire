@@ -29,6 +29,7 @@ object Main {
     GetWeather.getWeather("dataset/train/fireG10.parquet", "dataset/testweather.csv")
     //Chisquare.fireSizeAndCause()
     //DataOps.createJSONFile()
+    //GetWeather.dateConversion("2010", 200)
 
     // Test comment for a test commit for brandon to test pull request and merge master into brandon
     // Test comment two for test commit two
