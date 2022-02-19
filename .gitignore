@@ -5,6 +5,7 @@
 .idea
 dataset-offline
 metastore_db
+node_modules
 project
 spark-warehouse
 target

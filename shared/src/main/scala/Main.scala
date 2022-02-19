@@ -1,3 +1,5 @@
+package mainshared
+
 import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
@@ -12,13 +14,16 @@ import abby.AbbysDataops
 import dataops.Sampling
 
 
-object Main {
-  def main(args: Array[String]): Unit = {
-    //System.setProperty("hadoop.home.dir", "C:\\hadoop")
+object MainShared {
+  // def main(args: Array[String]): Unit = {
+    def mainShared(): Unit = {
+    println("SHRSHR running from withing shared folder")
     
-    // val sconf = new SparkConf().setMaster("local[4]").setAppName("Wildfire").setSparkHome("C:\\Spark")
-    // sconf.set("spark.driver.memory", "4g") 
-    // val sc = new SparkContext(sconf)
+    System.setProperty("hadoop.home.dir", "C:\\hadoop")
+    
+    val sconf = new SparkConf().setMaster("local[4]").setAppName("Wildfire").setSparkHome("C:\\Spark")
+    sconf.set("spark.driver.memory", "4g") 
+    val sc = new SparkContext(sconf)
     // val sconf = new SparkConf().setMaster("local[4]").setAppName("P2").setSparkHome("C:\\Spark")
     // val sc = new SparkContext(sconf)
     // val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").config("spark.executor.memory", "4g").enableHiveSupport().getOrCreate()
@@ -42,6 +47,7 @@ object Main {
     //Brandon's Main Space
 
     //Just a comment to prevent accidental merge with master
+
 
   }
 }
