@@ -29,7 +29,7 @@ object Main {
     //GetWeather.getWeather("dataset-online/train/fireG1.parquet", "dataset-offline/testweather3.csv")
     
     //Yueqi's Main Space
-    Chisquare.fireSizeAndCause()
+    //Chisquare.fireSizeAndCause()
     //DataOps.createJSONFile()
     //Sampling.stratifiedSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample")
     //Sampling.randomSampling()
@@ -40,6 +40,8 @@ object Main {
     //AbbysDataops.runSummaryStatements()
 
     //Brandon's Main Space
+
+    //Just a comment to prevent accidental merge with master
 
   }
 }

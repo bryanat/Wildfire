@@ -1,0 +1,5 @@
+package acrosscompilers
+
+object AcrossCompilersJS {
+  
+}
