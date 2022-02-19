@@ -29,11 +29,12 @@ object Main {
     //GetWeather.getWeather("dataset-online/train/fireG1.parquet", "dataset-offline/testweather3.csv")
     
     //Yueqi's Main Space
-    //Chisquare.fireSizeAndCause()
-    DataOps.createJSONFile()
-    //Sampling.stratifiedSampling()
+    Chisquare.fireSizeAndCause()
+    //DataOps.createJSONFile()
+    //Sampling.stratifiedSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample")
     //Sampling.randomSampling()
     //FireWeather.getWeather()
+
     
     //Abby's Main Space
     //AbbysDataops.runSummaryStatements()

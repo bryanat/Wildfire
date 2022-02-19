@@ -16,17 +16,8 @@ object Chisquare {
       .appName("WildFire")
       .config("spark.master", "local") 
       .enableHiveSupport()
-      .getOrCreate() 
+      .getOrCreate()    
 
-
-  def fireSizeAndWeather(): Unit={
-    //avg tempmax, dew
-    val firedf = ssql.read.parquet("dataset-offline/train/stratifiedSampleAll2.parquet")
-    var weatherdf = ssql.read.parquet("dataset-offline/train/testweather3.csv")
-    
-
-
-  }
 
 //null hypothesis: fire size class and cause of fires are unrelated
   def fireSizeAndCause(): Unit ={
@@ -38,37 +29,47 @@ object Chisquare {
     // for(i<-0 to 13) {
     //    bigFire+=0
     //  }
-    //labels: class A-G
+    // labels: class A-G
     //features: causes 1-13
     var fireVector =  Seq(Tuple2(1, Vectors.dense(0,0,0)))
-    val file = ssql.read.parquet("dataset-offline/train/stratifiedSampleAll2.parquet")
+    val file = ssql.read.parquet("dataset-offline/train/stratifiedSampleAll3.parquet")
     file.show()
     file.select("FIRE_SIZE_CLASS", "STAT_CAUSE_CODE").collect.foreach({row=>
         var fireclass = row(0).toString
         var cause = row(1).toString
         var idx = cause.toDouble.toInt-1
-        if (fireclass=="A") {
-            fireVector = fireVector :+ Tuple2(0, Vectors.sparse(13, Array(idx), Array(1)))
-        }
-        else if (fireclass=="B") {
+        if (fireclass=="A"|fireclass=="B"|fireclass=="C") {
+          fireVector = fireVector :+ Tuple2(0, Vectors.sparse(13, Array(idx), Array(1)))
+         }
+        else if (fireclass=="D"|fireclass=="E"|fireclass=="F") {
             fireVector = fireVector :+ Tuple2(1, Vectors.sparse(13, Array(idx), Array(1)))
         }
-        else if (fireclass=="C") {
-          fireVector = fireVector :+ Tuple2(2, Vectors.sparse(13, Array(idx), Array(1)))
+        else if (fireclass=="G") {
+            fireVector = fireVector :+ Tuple2(2, Vectors.sparse(13, Array(idx), Array(1)))
         }
-         else if (fireclass=="D") {
-            fireVector = fireVector :+ Tuple2(3, Vectors.sparse(13, Array(idx), Array(1)))
-        }
-         else if (fireclass=="E") {
-            fireVector = fireVector :+ Tuple2(4, Vectors.sparse(13, Array(idx), Array(1)))
-        }
-         else if (fireclass=="F") {
-            fireVector = fireVector :+ Tuple2(5, Vectors.sparse(13, Array(idx), Array(1)))
-        }
-        else{
-          fireVector = fireVector :+ Tuple2(6, Vectors.sparse(13, Array(idx), Array(1)))
-        }
-        })
+      })
+        // if (fireclass=="A") {
+        //     fireVector = fireVector :+ Tuple2(0, Vectors.sparse(13, Array(idx), Array(1)))
+        // }
+        // else if (fireclass=="B") {
+        //     fireVector = fireVector :+ Tuple2(1, Vectors.sparse(13, Array(idx), Array(1)))
+        // }
+        // else if (fireclass=="C") {
+        //   fireVector = fireVector :+ Tuple2(2, Vectors.sparse(13, Array(idx), Array(1)))
+        // }
+        //  else if (fireclass=="D") {
+        //     fireVector = fireVector :+ Tuple2(3, Vectors.sparse(13, Array(idx), Array(1)))
+        // }
+        //  else if (fireclass=="E") {
+        //     fireVector = fireVector :+ Tuple2(4, Vectors.sparse(13, Array(idx), Array(1)))
+        // }
+        //  else if (fireclass=="F") {
+        //     fireVector = fireVector :+ Tuple2(5, Vectors.sparse(13, Array(idx), Array(1)))
+        // }
+        // else{
+        //   fireVector = fireVector :+ Tuple2(6, Vectors.sparse(13, Array(idx), Array(1)))
+        // }
+        // })
     // file.select("FIRE_SIZE",  "STAT_CAUSE_CODE").collect.foreach({row=>
     //     var size = row(0).toString
     //     var cause = row(1).toString

@@ -10,9 +10,9 @@ object Sampling {
     def stratifiedSampling(readFile:String, writeFile:String): Unit={
         val df = spark1.read.option("multiline","true").parquet(readFile)
         //fractions is a map that specifies which percentage of classA fire to classG fire you want; it picks a percentage of sample for each key
-        val fractions = Map("A"-> 0.05,"B"-> 0.1, "C"->0.2, "D"->0.3, "E"-> 0.4, "F"->0.5, "G"->0.8)
+        val fractions = Map("A"-> 0.01,"B"-> 0.05, "C"->0.1, "D"->0.2, "E"-> 0.4, "F"->0.5, "G"->0.8)
         //123 is the seed: if you want the same sample next time, use 123 again; if you want a different sample, use another seed: 456, 1234, 78, anything works. 
-        val sample = df.stat.sampleBy("FIRE_SIZE_CLASS", fractions, 123)
+        val sample = df.stat.sampleBy("FIRE_SIZE_CLASS", fractions, 13)
         sample.write.parquet(writeFile)
     }
 
