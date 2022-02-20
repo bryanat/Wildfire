@@ -27,15 +27,23 @@ object GetWeather {
     // df.createOrReplaceTempView("firetable")
     // ssql.sql("SELECT * FROM firetable where FIRE_YEAR = '2005'").show()
     var weather_ListBuffer = ListBuffer[String]()
-    val array = df.select("OBJECTID", "LATITUDE", "LONGITUDE","FIRE_YEAR", "DISCOVERY_DOY", "CONT_DOY").collect().foreach({row=>
-      println(row.mkString)
-        var id= row(0).toString
+    try{
+      val array = df.select("OBJECTID", "LATITUDE", "LONGITUDE","FIRE_YEAR", "DISCOVERY_DOY", "CONT_DOY").collect().foreach({row=>
+      var id= row(0).toString
+      try{
         var lat = row(1).toString.toDouble
         var lon = row(2).toString.toDouble
         var year = row(3).toString
         var start = dateConversion(row(3).toString, row(4).toString.toInt)
-        var end = dateConversion(row(3).toString, row(5).toString.toInt)
-        var url = s"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/$lat%2C$lon/$start/$end?unitGroup=metric&include=days&key=SVV5ZE8VC54DVH27W4ZMAVFMR&contentType=csv"
+        var end = ""
+        //To handle nullpointerexception error, if cont_doy null, set cont_doy to discovery_doy
+        if (row(5)==null) {
+          end = start
+        }
+        else{
+          end = dateConversion(row(3).toString, row(5).toString.toInt)
+        }
+        var url = s"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/$lat%2C$lon/$start/$end?unitGroup=metric&include=days&key=SVV5ZE8VC54DVH27W4ZMAVFMR&contentType=csv"    
         var bufferedSource = scala.io.Source.fromURL(url)
         var first = 1
         for (line <- bufferedSource.getLines) {
@@ -46,7 +54,15 @@ object GetWeather {
         first+=1
         }
         bufferedSource.close
+      }
+      catch {
+        case e: NullPointerException => println(s"$id")
+      }
     })
+  }
+    catch {
+        case e: NullPointerException => println("fire skipped outer")
+      }
     val weatherList = weather_ListBuffer.toList
     writeWeather(writeFile, weatherList)
     }
