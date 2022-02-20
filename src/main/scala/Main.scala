@@ -34,8 +34,8 @@ object Main {
     //DataOps.createJSONFile()
     //Sampling.stratifiedSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample")
     //Sampling.randomSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample2")
-    //FireWeather.getWeather()
-    TestCorrelation.fireOnlyCorr()
+    //FireWeather.combineFireWeather()
+    TestCorrelation.fireWeatherCorr()
 
 
     

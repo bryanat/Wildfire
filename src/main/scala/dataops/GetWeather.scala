@@ -37,12 +37,12 @@ object GetWeather {
         var start = dateConversion(row(3).toString, row(4).toString.toInt)
         var end = ""
         //To handle nullpointerexception error, if cont_doy null, set cont_doy to discovery_doy
-        if (row(5)==null) {
-          end = start
-        }
-        else{
-          end = dateConversion(row(3).toString, row(5).toString.toInt)
-        }
+        // if (row(5)==null) {
+        //   end = start
+        // }
+        // else{
+        //   end = dateConversion(row(3).toString, row(5).toString.toInt)
+        // }
         var url = s"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/$lat%2C$lon/$start/$end?unitGroup=metric&include=days&key=SVV5ZE8VC54DVH27W4ZMAVFMR&contentType=csv"    
         var bufferedSource = scala.io.Source.fromURL(url)
         var first = 1
