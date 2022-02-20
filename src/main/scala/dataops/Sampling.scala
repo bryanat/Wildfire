@@ -19,7 +19,7 @@ object Sampling {
     def randomSampling(readFile:String, writeFile:String): Unit={
         val df = spark1.read.option("multiline", "true").parquet(readFile)
         //unlike the fractions in stratified sampling for each partition, the fraction in random sampling is applied to the entire dataset
-        var fraction = 0.005
+        var fraction = 0.0003
         //you can specify an optional seed after fraction
         val sample = df.sample(fraction)
         sample.write.parquet(writeFile)
