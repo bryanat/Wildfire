@@ -15,7 +15,7 @@ lazy val root = project.in(file(".")).
   )
 lazy val y = crossProject(JSPlatform, JVMPlatform).in(file(".")).
   settings(
-    name := "P1",
+    name := "Wildfire",
     version := "0.1-SNAPSHOT",
     libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2",
     //libraryDependencies += "org.singlespaced" %%% "scalajs-d3" % "0.3.4"
