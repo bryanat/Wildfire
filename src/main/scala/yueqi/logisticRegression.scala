@@ -31,6 +31,7 @@ object LogRegression {
 
 
 
+/*
 
 // // Create a LogisticRegression instance. This instance is an Estimator.
 // val lr = new LogisticRegression()
@@ -64,6 +65,7 @@ object LogRegression {
 // val model2 = lr.fit(training, paramMapCombined)
 // println("Model 2 was fit using parameters: " + model2.parent.extractParamMap)
 
+*/
 
 
 }
