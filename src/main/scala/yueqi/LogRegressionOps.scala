@@ -8,7 +8,7 @@ import org.apache.spark.sql.Row
 
 // ultimate goal: predict future chances of wildfires given temperatures
 
-object LogRegression {
+object LogRegressionOps {
      val ssql = ConnectSparkSession.connect()
     import ssql.implicits._
 

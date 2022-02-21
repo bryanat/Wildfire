@@ -1,17 +1,10 @@
 import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
-import dataops.GetWeather
-import yueqi.Chisquare
-import yueqi.CorrelationMatrixOps
-import yueqi.FireWeather
-import yueqi.LogRegression
-import abby.Whatever
 import org.apache.spark.sql.DataFrameWriter
-// import org.apache.spark.sql.SparkSession.implicits._
-import dataops.DataOps
+import yueqi.{CorrelationMatrixOps, Chisquare, FireWeather, LogRegressionOps}
+import dataops.{DataOps, GetWeather, Sampling} 
 import abby.AbbysDataops
-import dataops.Sampling
 
 
 object Main {
