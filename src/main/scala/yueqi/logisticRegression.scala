@@ -1,5 +1,5 @@
 package yueqi
-import TestCorrelation._
+import CorrelationMatrixOps._
 import contexts.ConnectSparkSession
 import org.apache.spark.ml.classification.LogisticRegression
 import org.apache.spark.ml.linalg.{Vector, Vectors}

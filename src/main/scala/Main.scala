@@ -3,7 +3,7 @@ import org.apache.spark.streaming._
 import org.apache.spark.sql._
 import dataops.GetWeather
 import yueqi.Chisquare
-import yueqi.TestCorrelation
+import yueqi.CorrelationMatrixOps
 import yueqi.FireWeather
 import yueqi.LogRegression
 import abby.Whatever
@@ -37,7 +37,7 @@ object Main {
     //Sampling.randomSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample2")
     //FireWeather.combineFireWeather()
     
-    TestCorrelation.fireWeatherCorr()
+    CorrelationMatrixOps.fireWeatherCorr()
     //LogRegression.fitClassAndWeather()
 
     //TestCorrelation.fireOnlyCorr()
