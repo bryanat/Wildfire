@@ -11,7 +11,7 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.functions.udf
 
 
-object TestCorrelation {
+object CorrelationMatrixOps {
     val ssql = ConnectSparkSession.connect()
     import ssql.implicits._
 
