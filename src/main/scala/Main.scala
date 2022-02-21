@@ -1,15 +1,13 @@
 import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
-import dataops.GetWeather
 import yueqi.Chisquare
 import yueqi.FireWeather
 import abby.Whatever
 import org.apache.spark.sql.DataFrameWriter
 // import org.apache.spark.sql.SparkSession.implicits._
-import dataops.DataOps
+import dataops.{GetWeather, DataOps, Sampling, QueryFire}
 import abby.AbbysDataops
-import dataops.Sampling
 
 
 object Main {
@@ -29,7 +27,7 @@ object Main {
     //GetWeather.getWeather("dataset-online/train/fireG1.parquet", "dataset-offline/testweather3.csv")
     
     //Yueqi's Main Space
-    Chisquare.fireSizeAndCause()
+    //Chisquare.fireSizeAndCause()
     //DataOps.createJSONFile()
     //Sampling.stratifiedSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample")
     //Sampling.randomSampling()
@@ -41,5 +39,6 @@ object Main {
 
     //Brandon's Main Space
 
+    QueryFire.queryTexas()
   }
 }
