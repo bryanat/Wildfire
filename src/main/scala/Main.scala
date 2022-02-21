@@ -2,6 +2,7 @@ import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
 import yueqi.Chisquare
+import yueqi.TestCorrelation
 import yueqi.FireWeather
 import abby.Whatever
 import org.apache.spark.sql.DataFrameWriter
@@ -24,14 +25,16 @@ object Main {
     // val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").enableHiveSupport().getOrCreate()
 
     //Master Main Space
-    //GetWeather.getWeather("dataset-online/train/fireG1.parquet", "dataset-offline/testweather3.csv")
+    //GetWeather.getWeather("dataset-offline/train/randomSample0.0002.parquet", "dataset-offline/train/randomSampleweather2.csv")
     
     //Yueqi's Main Space
     //Chisquare.fireSizeAndCause()
     //DataOps.createJSONFile()
     //Sampling.stratifiedSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample")
-    //Sampling.randomSampling()
-    //FireWeather.getWeather()
+    //Sampling.randomSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample2")
+    //FireWeather.combineFireWeather()
+    TestCorrelation.fireWeatherCorr()
+
 
     
     //Abby's Main Space
