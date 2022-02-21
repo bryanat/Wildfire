@@ -15,25 +15,26 @@ object LogRegression {
   def fitClassAndWeather(): Unit={
       val rowArray = fireWeatherCorr()
       var corrArray = Seq(Tuple1(0.toDouble, Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0)))
-      // val logArray = rowArray.foreach({row=>
-      //   //find the fire_size_class from ID
-      //   var temp=Array(row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
-      //       row(6).toString.toDouble, row(7).toString.toDouble, row(8).toString.toDouble, row(9).toString.toDouble, row(10).toString.toDouble, row(11).toString.toDouble,row(12).toString.toDouble, row(13).toString.toDouble)
-      //       corrArray = corrArray :+ Tuple1(row(1).toString.toDouble, Vectors.dense(temp))
-      //   })
-      //   val training = corrArray.drop(1).toDF("label", "features")
-      //   // Create a LogisticRegression instance. This instance is an Estimator.
-      //   val lr = new LogisticRegression()
-      //   // Print out the parameters, documentation, and any default values.
-      //   println("LogisticRegression parameters:\n" + lr.explainParams() + "\n")
+      val logArray = rowArray.foreach({row=>
+        //find the fire_size_class from ID
+        var temp=Array(row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
+            row(6).toString.toDouble, row(7).toString.toDouble, row(8).toString.toDouble, row(9).toString.toDouble, row(10).toString.toDouble, row(11).toString.toDouble,row(12).toString.toDouble, row(13).toString.toDouble)
+            corrArray = corrArray :+ Tuple1(row(1).toString.toDouble, Vectors.dense(temp))
+        })
+        println(corrArray.mkString)
+        val training = corrArray.drop(1).toDF("label", "features")
+        // Create a LogisticRegression instance. This instance is an Estimator.
+        val lr = new LogisticRegression()
+        // Print out the parameters, documentation, and any default values.
+        println("LogisticRegression parameters:\n" + lr.explainParams() + "\n")
 
-      //   // We may set parameters using setter methods.
-      //   lr.setMaxIter(10)
-      //     .setRegParam(0.01)
+        // We may set parameters using setter methods.
+        lr.setMaxIter(10)
+          .setRegParam(0.01)
 
-      //     // Learn a LogisticRegression model. This uses the parameters stored in lr.
-      //   val model1 = lr.fit(training)
-      //   println("Model 1 was fit using parameters: " + model1.parent.extractParamMap)
+          // Learn a LogisticRegression model. This uses the parameters stored in lr.
+        val model1 = lr.fit(training)
+        println("Model 1 was fit using parameters: " + model1.parent.extractParamMap)
 
       }
 

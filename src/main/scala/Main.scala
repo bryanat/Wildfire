@@ -37,8 +37,8 @@ object Main {
     //Sampling.randomSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample2")
     //FireWeather.combineFireWeather()
     
-    CorrelationMatrixOps.fireWeatherCorr()
-    //LogRegression.fitClassAndWeather()
+    //CorrelationMatrixOps.fireWeatherCorr()
+    LogRegression.fitClassAndWeather()
 
     //TestCorrelation.fireOnlyCorr()
 
