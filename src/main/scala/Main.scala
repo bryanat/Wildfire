@@ -5,6 +5,7 @@ import dataops.GetWeather
 import yueqi.Chisquare
 import yueqi.TestCorrelation
 import yueqi.FireWeather
+import yueqi.LogRegression
 import abby.Whatever
 import org.apache.spark.sql.DataFrameWriter
 // import org.apache.spark.sql.SparkSession.implicits._
@@ -35,7 +36,11 @@ object Main {
     //Sampling.stratifiedSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample")
     //Sampling.randomSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample2")
     //FireWeather.combineFireWeather()
+    
     TestCorrelation.fireWeatherCorr()
+    //LogRegression.fitClassAndWeather()
+
+    //TestCorrelation.fireOnlyCorr()
 
 
     
