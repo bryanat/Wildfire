@@ -88,6 +88,7 @@ object CorrelationMatrixOps {
     //     val Row(coeff1: Matrix) = Correlation.corr(df, "features")
     //     println("Pearson correlation matrix:\n" + coeff1.toString)
     // }
+    // PearsonCorr()
 
     // def SpearmanCorr(arrayWF:Array[Row]): Unit = {
     //     var corrArray = Seq(Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0))
