@@ -15,7 +15,7 @@ object CorrelationMatrixOps {
     val ssql = ConnectSparkSession.connect()
     import ssql.implicits._
 
-    def fireOnlyCorr(): Unit = {
+    def fireOnlyCorr(): Unit= {
         val fireDF = ssql.read.parquet("dataset-offline/train/stratifiedSampleAll2.parquet").select("FIRE_SIZE", "LATITUDE",
         "LONGITUDE","FIRE_YEAR","DISCOVERY_DOY","CONT_DOY").filter("CONT_DOY is not NULL").filter("DISCOVERY_DOY is not NULL").filter("FIRE_SIZE is not NULL")
         var corrArray = Seq(Vectors.dense(0,0,0))
@@ -32,7 +32,7 @@ object CorrelationMatrixOps {
 
 
 //Fire_Size_Class 1. Fire_Size 2. Lattitude 3. Longitude 4. Fire_year 5. Discovery_doy 6. Cont_doy 7. avgtempmax 8. avgtempmin 9. avgdew 10. avghumid 11. avgprecip 12. avgwindsp 13. avgpress 14. avgcloud
-    def fireWeatherCorr(): Unit={
+    def fireWeatherCorr(): Array[Row]={
         val fireNumMap = Map("A"->0, "B"->1, "C"->2, "D"->3, "E"->4, "F"->5, "G"->6)  
         val classudf = udf((fireclass: String)=>fireNumMap.get(fireclass))
         val fireDF = ssql.read.parquet("dataset-offline/train/randomSampleF0.0002.parquet").select($"OBJECTID", classudf($"FIRE_SIZE_CLASS"),$"FIRE_SIZE", $"LATITUDE",
@@ -61,17 +61,19 @@ object CorrelationMatrixOps {
         //val arrayWF = fireDF.join(weatherJoin, fireDF("OBJECTID")===weatherJoin("OBJECTID")).collect()
         //PearsonCorr(arrayWF)
         var corrArray = Seq(Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0,0))
-        val joinFW = fireDF.join(weatherJoin, fireDF("OBJECTID")===weatherJoin("OBJECTID")).collect().foreach({row=>
-            var temp=Array(row(1).toString.toDouble, row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
-            row(6).toString.toDouble, row(7).toString.toDouble, row(8).toString.toDouble, row(9).toString.toDouble, row(10).toString.toDouble, row(11).toString.toDouble,row(12).toString.toDouble, row(13).toString.toDouble, row(14).toString.toDouble)
-            corrArray = corrArray :+ Vectors.dense(temp) 
-        })
-        val df = corrArray.drop(1).map(Tuple1.apply).toDF("features")
-        df.show()
-        val Row(coeff1: Matrix) = Correlation.corr(df, "features")
-        println(s"Pearson correlation matrix:\n $coeff1")
-        val Row(coeff2: Matrix) = Correlation.corr(df, "features", "spearman")
-        println(s"Spearman correlation matrix:\n $coeff2")
+        val joinFW = fireDF.join(weatherJoin, fireDF("OBJECTID")===weatherJoin("OBJECTID")).collect()
+        // joinFW.foreach({row=>
+        //     var temp=Array(row(1).toString.toDouble, row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
+        //     row(6).toString.toDouble, row(7).toString.toDouble, row(8).toString.toDouble, row(9).toString.toDouble, row(10).toString.toDouble, row(11).toString.toDouble,row(12).toString.toDouble, row(13).toString.toDouble, row(14).toString.toDouble)
+        //     corrArray = corrArray :+ Vectors.dense(temp) 
+        // })
+        return joinFW
+        // val df = corrArray.drop(1).map(Tuple1.apply).toDF("features")
+        // df.show()
+        // val Row(coeff1: Matrix) = Correlation.corr(df, "features")
+        // println(s"Pearson correlation matrix:\n $coeff1")
+        // val Row(coeff2: Matrix) = Correlation.corr(df, "features", "spearman")
+        // println(s"Spearman correlation matrix:\n $coeff2")
     }   
 
 
