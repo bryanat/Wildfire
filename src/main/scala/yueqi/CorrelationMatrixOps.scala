@@ -16,7 +16,7 @@ object CorrelationMatrixOps {
     import ssql.implicits._
 
     def fireOnlyCorr(): Unit= {
-        val fireDF = ssql.read.parquet("dataset-offline/train/stratifiedSampleAll2.parquet").select("FIRE_SIZE", "LATITUDE",
+        val fireDF = ssql.read.parquet("dataset-online/train/stratifiedSampleAll2.parquet").select("FIRE_SIZE", "LATITUDE",
         "LONGITUDE","FIRE_YEAR","DISCOVERY_DOY","CONT_DOY").filter("CONT_DOY is not NULL").filter("DISCOVERY_DOY is not NULL").filter("FIRE_SIZE is not NULL")
         var corrArray = Seq(Vectors.dense(0,0,0))
         var corr = fireDF.collect().foreach({row=>
