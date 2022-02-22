@@ -29,7 +29,6 @@ object CorrelationMatrixOps {
             val Row(coeff1: Matrix) = Correlation.corr(df, "features").head
             println("Pearson correlation matrix:\n" + coeff1.toString)
             val matrixRows = coeff1.rowIter.toArray.map(_.toArray)
-            //matrixRows.foreach(x=>println(x))
         }
         defPearsonCorr(fireWeatherCorr(fireFile,weatherFile))
     }
@@ -37,8 +36,9 @@ object CorrelationMatrixOps {
 
 
 
-        def SpearmanCorr(arrayWF:Array[Row], fireFile:String, weatherFile:String): Unit = {
+        def spearmanCorr(arrayWF:Array[Row], fireFile:String, weatherFile:String): Unit = {
             def defSpearmanCorr(arrayWF:Array[Row]): Unit = {
+                //println(arrayWF.mkString)
             var corrArray = Seq(Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0,0))
             val x = arrayWF.foreach({row=>
                 var temp=Array(row(1).toString.toDouble, row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
@@ -53,12 +53,13 @@ object CorrelationMatrixOps {
             defSpearmanCorr(fireWeatherCorr(fireFile,weatherFile))
     }
 
-//Fire_Size_Class 1. Fire_Size 2. Lattitude 3. Longitude 4. Fire_year 5. Discovery_doy 6. Cont_doy 7. avgtempmax 8. avgtempmin 9. avgdew 10. avghumid 11. avgprecip 12. avgwindsp 13. avgpress 14. avgcloud
+//0.Fire_Size_Class 1. Fire_Size 2. Lattitude 3. Longitude 4. Fire_year 5. Discovery_doy 6. Cont_doy 7. avgtempmax 8. avgtempmin 9. avgdew 10. avghumid 11. avgprecip 12. avgwindsp 13. avgpress 14. avgcloud
     def fireWeatherCorr(fireFile: String, weatherFile:String): Array[Row]={
         val fireNumMap = Map("A"->0, "B"->1, "C"->2, "D"->3, "E"->4, "F"->5, "G"->6)  
         val classudf = udf((fireclass: String)=>fireNumMap.get(fireclass))
+        val burndaysudf = udf((startdate:Int, enddate:Int)=>enddate-startdate)
         val fireDF = ssql.read.parquet(fireFile).select($"OBJECTID", classudf($"FIRE_SIZE_CLASS"),$"FIRE_SIZE", $"LATITUDE",
-        $"LONGITUDE",$"FIRE_YEAR",$"DISCOVERY_DOY",$"CONT_DOY").filter("CONT_DOY is not NULL").filter("DISCOVERY_DOY is not NULL").filter("FIRE_SIZE is not NULL").filter("FIRE_YEAR is not NULL")
+        $"LONGITUDE",$"FIRE_YEAR",burndaysudf($"DISCOVERY_DOY", $"CONT_DOY")).filter("CONT_DOY is not NULL").filter("DISCOVERY_DOY is not NULL").filter("FIRE_SIZE is not NULL").filter("FIRE_YEAR is not NULL")
         var weather = ssql.read.csv(weatherFile)
         var weatherDF = weather.toDF("OBJECTID","name","datetime","tempmax","tempmin","temp","feelslikemax","feelslikemin","feelslike","dew","humidity","precip","precipprob","precipcover","preciptype","snow","snowdepth","windgust","windspeed","winddir",
   "sealevelpressure","cloudcover","visibility","solarradiation","solarenergy","uvindex","severerisk")
@@ -73,14 +74,15 @@ object CorrelationMatrixOps {
         val avgwindsp = weatherDF1.groupBy("OBJECTID").avg("windspeed").withColumnRenamed("OBJECTID", "OBJECTID6")
         val avgpress = weatherDF1.groupBy("OBJECTID").avg("sealevelpressure").withColumnRenamed("OBJECTID", "OBJECTID7")
         val avgcloud = weatherDF1.groupBy("OBJECTID").avg("cloudcover").withColumnRenamed("OBJECTID", "OBJECTID8")
-        val weatherJoin = avgtempmax.join(avgtempmin, avgtempmax("OBJECTID1")===avgtempmin("OBJECTID2"))
-            .join(avgdew, avgtempmin("OBJECTID2")===avgdew("OBJECTID3"))
-            .join(avghumid, avgdew("OBJECTID3")===avghumid("OBJECTID4"))
-            .join(avgprecip, avghumid("OBJECTID4")===avgprecip("OBJECTID5"))
-            .join(avgwindsp, avgprecip("OBJECTID5")===avgwindsp("OBJECTID6"))
-             .join(avgpress, avgwindsp("OBJECTID6")===avgpress("OBJECTID7"))
-             .join(avgcloud, avgpress("OBJECTID7")===avgcloud("OBJECTID8")).drop("OBJECT1").drop("OBJECT2").drop("OBJECT3").drop("OBJECT4").drop("OBJECT5").drop("OBJECT6").drop("OBJECT7").withColumnRenamed("OBJECTID8", "OBJECTID")
-        val joinFW = fireDF.join(weatherJoin, fireDF("OBJECTID")===weatherJoin("OBJECTID")).collect()
+        val weatherJoin = avgtempmax.join(avgtempmin, avgtempmax("OBJECTID1")===avgtempmin("OBJECTID2")).drop("OBJECTID1")
+            .join(avgdew, avgtempmin("OBJECTID2")===avgdew("OBJECTID3")).drop("OBJECTID2")
+            .join(avghumid, avgdew("OBJECTID3")===avghumid("OBJECTID4")).drop("OBJECTID3")
+            .join(avgprecip, avghumid("OBJECTID4")===avgprecip("OBJECTID5")).drop("OBJECTID4")
+            .join(avgwindsp, avgprecip("OBJECTID5")===avgwindsp("OBJECTID6")).drop("OBJECTID5")
+             .join(avgpress, avgwindsp("OBJECTID6")===avgpress("OBJECTID7")).drop("OBJECTID6")
+             .join(avgcloud, avgpress("OBJECTID7")===avgcloud("OBJECTID8")).drop("OBJECT7")
+        //drop objectid on column ~12
+        val joinFW = fireDF.join(weatherJoin, fireDF("OBJECTID")===weatherJoin("OBJECTID8")).drop("OBJECTID8").drop("OBJECTID").collect()
         joinFW
     }   
 
@@ -101,39 +103,6 @@ object CorrelationMatrixOps {
     }
 
 
-
-
-
-
-//     def sizeAndAvgTemp(): Unit = {
-//     import ssql.implicits._
-//     val fireDF = ssql.read.parquet("dataset-offline/train/randomSample0.0002.parquet")
-//     val weather = ssql.read.csv("dataset-offline/train/randomSampleweather2.csv").toDF("OBJECTID","name","datetime","tempmax","tempmin","temp","feelslikemax","feelslikemin","feelslike","dew","humidity","precip","precipprob","precipcover","preciptype","snow","snowdepth","windgust","windspeed","winddir",
-//   "sealevelpressure","cloudcover","visibility","solarradiation","solarenergy","uvindex", "severerisk")
-//     var weatherDF = weather.withColumn("tempmax", col("tempmax").cast(DoubleType))
-//    var avgMaxTemp = weatherDF.groupBy("OBJECTID").avg("tempmax").withColumnRenamed("avg(tempmax)", "avgmaxtemp")
-//    avgMaxTemp.show()
-
-//    //avg("tempmin").avg("dew").avg("humidity").avg("windspeed").avg("cloudcover")
-//    //.withColumnRenamed("avg(tempmin)", "avgmintemp").withColumnRenamed("avg(humidity)", "avghumid").withColumnRenamed("avg(windspeed)", "avgwindspd").withColumnRenamed("avg(cloudcover)", "avgcloud")
-   
-//    var fireSizeArray = ArrayBuffer[Double]()
-//    var avgTempArray = ArrayBuffer[Double]()
-//     var joinFW = fireDF.join(avgMaxTemp, avgMaxTemp("OBJECTID")===fireDF("OBJECTID"), "inner").select("FIRE_SIZE", "avgmaxtemp").collect().foreach({row=>
-//         var size = row(0).toString.toDouble
-//         var temp = row(1).toString.toDouble
-//         fireSizeArray+=size 
-//         avgTempArray+=temp
-//     })
-//     var corrVector = Seq(Vectors.dense(0,0,0))
-//     corrVector = corrVector :+ Vectors.dense(fireSizeArray.toArray)
-//     corrVector = corrVector :+ Vectors.dense(avgTempArray.toArray)
-//     val df = corrVector.drop(1).map(Tuple1.apply).toDF("features")
-//     val Row(coeff1: Matrix) = Correlation.corr(df, "features").head
-//     println("Pearson correlation matrix:\n" + coeff1.toString)
-//     val Row(coeff2: Matrix) = Correlation.corr(df, "features", "spearman").head
-//     println("Spearman correlation matrix:\n" + coeff2.toString)
-//     }
 
 
     }

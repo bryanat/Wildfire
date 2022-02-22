@@ -25,13 +25,12 @@ object Main {
     //GetWeather.getWeather("dataset-online/train/stratifiedSampleF2.parquet", "dataset-offline/train/stratifiedSampleW2.csv")
     
     //Yueqi's Main Space
-    //Chisquare.fireSizeAndCause()
+    //Chisquare.fireChi()
     //DataOps.createJSONFile()
     //Sampling.stratifiedSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample")
     //Sampling.randomSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample5")
     //FireWeather.combineFireWeather()
-    CorrelationMatrixOps.pearsonCorr(CorrelationMatrixOps.fireWeatherCorr("dataset-online/train/randomSampleF0.0005.parquet", "dataset-online/train/randomSampleW0.0005.csv"),"dataset-online/train/randomSampleF0.0005.parquet", "dataset-online/train/randomSampleW0.0005.csv")
-    //CorrelationMatrixOps.fireWeatherCorr()
+    CorrelationMatrixOps.spearmanCorr(CorrelationMatrixOps.fireWeatherCorr("dataset-online/train/randomSampleF0.0005.parquet", "dataset-online/train/randomSampleW0.0005.csv"),"dataset-online/train/randomSampleF0.0005.parquet", "dataset-online/train/randomSampleW0.0005.csv")
     //LogRegressionOps.fitClassAndWeather()
 
     //TestCorrelation.fireOnlyCorr()

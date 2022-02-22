@@ -1,7 +1,5 @@
 package yueqi
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.SparkContext._
-import org.apache.spark.SparkConf
+import contexts.ConnectSparkSession
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 import org.apache.spark.ml.linalg.Vectors
@@ -11,16 +9,12 @@ import org.apache.spark.ml.stat.ChiSquareTest
 //the chi square test determines whether there is a strong correlation between categorical features tested against a label
 
 object Chisquare {
-    System.setProperty("hadoop.home.dir", "C:\\hadoop")
-    val ssql = SparkSession.builder()
-      .appName("WildFire")
-      .config("spark.master", "local") 
-      .enableHiveSupport()
-      .getOrCreate()    
+  val ssql = ConnectSparkSession.connect()
+  import ssql.implicits._
 
 
 //null hypothesis: fire size class and cause of fires are unrelated
-  def fireSizeAndCause(): Unit ={
+  def fireChi(): Unit ={
     // var smallFire = ArrayBuffer[Double]()
     // var bigFire = ArrayBuffer[Double]()
     // for(i<-0 to 13) {
@@ -34,24 +28,25 @@ object Chisquare {
     //var fireVector =  Seq(Tuple2(1, Vectors.dense(0,0,0)))
     var fireVector = Seq(Tuple2(0, Vectors.dense(0,0,0)))
     val file = ssql.read.parquet("dataset-offline/train/stratifiedSampleAll3.parquet")
-    file.show()
+    val statesMap = ssql.read.csv("dataset-offline/validation/statemap.csv").toDF("state", "id").select($"state", $"id".cast("int")).as[(String, Int)].collect.toMap
     val classNumMap = Map("A"->0, "B"->1, "C"->2, "D"->3, "E"->4, "F"->5, "G"->6) 
-    val stateMap = 
-    file.select("FIRE_SIZE_CLASS", "STAT_CAUSE_CODE", "YEAR", "STATE").collect.foreach({row=>
+    file.select("FIRE_SIZE_CLASS", "STAT_CAUSE_CODE", "FIRE_YEAR", "STATE").collect.foreach({row=>
         var fireclass = row(0).toString
         var cause = row(1).toString.toDouble
         //var idx = cause.toDouble.toInt-1
         var year = row(2).toString.toDouble
-        var stateudf = udf((state:String=>stateMap.get(state))
-        var state = 
+        var state = row(3).toString
+        var stateCode =  statesMap.getOrElse(state, 0).toDouble
         if (fireclass=="A"|fireclass=="B"|fireclass=="C") {
-          fireVector = fireVector :+  Tuple2(0,Vectors.dense(Array(cause, year)))
+          fireVector = fireVector :+  Tuple2(0,Vectors.dense(Array(cause, year, stateCode)))
           //fireVector = fireVector :+ Tuple2(0, Vectors.sparse(13, Array(idx), Array(1)))
          }
         else if (fireclass=="D"|fireclass=="E"|fireclass=="F") {
+          fireVector = fireVector :+  Tuple2(1,Vectors.dense(Array(cause, year, stateCode)))
             //fireVector = fireVector :+ Tuple2(1, Vectors.sparse(13, Array(idx), Array(1)))
         }
         else if (fireclass=="G") {
+          fireVector = fireVector :+  Tuple2(2,Vectors.dense(Array(cause, year, stateCode)))
             //fireVector = fireVector :+ Tuple2(2, Vectors.sparse(13, Array(idx), Array(1)))
         }
       })
@@ -91,7 +86,6 @@ object Chisquare {
     // fireVector = fireVector :+ Tuple2(0, Vectors.dense(smallFire.toArray))
     // fireVector = fireVector :+ Tuple2(1, Vectors.dense(bigFire.toArray))
     // print(fireVector.mkString)
-    import ssql.implicits._
     val df = fireVector.drop(1).toDF("label", "features")
     val chi = ChiSquareTest.test(df, "features", "label").head
     println(s"pValues = ${chi.getAs[Vector](0)}")
