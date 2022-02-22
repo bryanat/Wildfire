@@ -2,7 +2,7 @@ import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
 import org.apache.spark.sql.DataFrameWriter
-import yueqi.{CorrelationMatrixOps, Chisquare, FireWeather, LogRegressionOps}
+import yueqi.{CorrelationMatrixOps, Chisquare, FireWeatherQuery, LogRegressionOps}
 import dataops.{DataOps, GetWeather, Sampling} 
 import abby.AbbysDataops
 import org.sparkproject.dmg.pmml.CorrelationMethods
@@ -30,8 +30,9 @@ object Main {
     //Sampling.stratifiedSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample")
     //Sampling.randomSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample5")
     //FireWeather.combineFireWeather()
-    CorrelationMatrixOps.spearmanCorr(CorrelationMatrixOps.fireWeatherCorr("dataset-online/train/randomSampleF0.0005.parquet", "dataset-online/train/randomSampleW0.0005.csv"),"dataset-online/train/randomSampleF0.0005.parquet", "dataset-online/train/randomSampleW0.0005.csv")
+    //CorrelationMatrixOps.spearmanCorr(CorrelationMatrixOps.fireWeatherCorr("dataset-online/train/randomSampleF0.0005.parquet", "dataset-online/train/randomSampleW0.0005.csv"),"dataset-online/train/randomSampleF0.0005.parquet", "dataset-online/train/randomSampleW0.0005.csv")
     //LogRegressionOps.fitClassAndWeather()
+    FireWeatherQuery.queryFW()
 
     //TestCorrelation.fireOnlyCorr()
 

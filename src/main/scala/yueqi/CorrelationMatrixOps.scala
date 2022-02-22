@@ -9,6 +9,7 @@ import org.apache.spark.sql.Row
 import scala.collection.mutable.ArrayBuffer
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.functions.udf
+import org.apache.spark.sql.functions.broadcast
 
 
 object CorrelationMatrixOps {
@@ -63,9 +64,9 @@ object CorrelationMatrixOps {
         var weather = ssql.read.csv(weatherFile)
         var weatherDF = weather.toDF("OBJECTID","name","datetime","tempmax","tempmin","temp","feelslikemax","feelslikemin","feelslike","dew","humidity","precip","precipprob","precipcover","preciptype","snow","snowdepth","windgust","windspeed","winddir",
   "sealevelpressure","cloudcover","visibility","solarradiation","solarenergy","uvindex","severerisk")
-        val weatherDF1 = weatherDF.select("OBJECTID","tempmax", "tempmin", "dew", "humidity", "precip", "windspeed", "sealevelpressure", "cloudcover").withColumn("tempmax", col("tempmax").cast(DoubleType)).withColumn("tempmin", col("tempmin").cast(DoubleType)).withColumn("dew", col("dew").cast(DoubleType)).withColumn("humidity", col("humidity").cast(DoubleType)).withColumn("precip", 
-        col("precip").cast(DoubleType)).withColumn("windspeed", col("windspeed").cast(DoubleType)).withColumn("sealevelpressure", col("sealevelpressure").cast(DoubleType)).withColumn("cloudcover", col("cloudcover").cast(DoubleType)).filter("dew is not NULL").filter("precip is not NULL").filter("cloudcover is not NULL").filter("humidity is not NULL").filter("sealevelpressure is not NULL").filter(
-            "windspeed is not NULL")
+        val weatherDF1 = weatherDF.select("OBJECTID","tempmax", "tempmin", "dew", "humidity", "precip", "windspeed", "sealevelpressure", "cloudcover", "solarradiation", "solarenergy", "uvindex").withColumn("tempmax", col("tempmax").cast(DoubleType)).withColumn("tempmin", col("tempmin").cast(DoubleType)).withColumn("dew", col("dew").cast(DoubleType)).withColumn("humidity", col("humidity").cast(DoubleType)).withColumn("precip", 
+        col("precip").cast(DoubleType)).withColumn("windspeed", col("windspeed").cast(DoubleType)).withColumn("sealevelpressure", col("sealevelpressure").cast(DoubleType)).withColumn("cloudcover", col("cloudcover").cast(DoubleType)).withColumn("solarradiation", col("solarradiation").cast(DoubleType)).withColumn("solarenergy", col("solarenergy").cast(DoubleType)).withColumn("uvindex", col("uvindex").cast(DoubleType)).
+        filter("dew is not NULL").filter("precip is not NULL").filter("cloudcover is not NULL").filter("humidity is not NULL").filter("sealevelpressure is not NULL").filter("windspeed is not NULL").filter("solarradiation is not NULL").filter("solarenergy is not NULL").filter("uvindex is not NULL")
         val avgtempmax = weatherDF1.groupBy("OBJECTID").avg("tempmax").withColumnRenamed("OBJECTID", "OBJECTID1")
         val avgtempmin = weatherDF1.groupBy("OBJECTID").avg("tempmin").withColumnRenamed("OBJECTID", "OBJECTID2")
         val avgdew = weatherDF1.groupBy("OBJECTID").avg("dew").withColumnRenamed("OBJECTID", "OBJECTID3")
@@ -74,15 +75,22 @@ object CorrelationMatrixOps {
         val avgwindsp = weatherDF1.groupBy("OBJECTID").avg("windspeed").withColumnRenamed("OBJECTID", "OBJECTID6")
         val avgpress = weatherDF1.groupBy("OBJECTID").avg("sealevelpressure").withColumnRenamed("OBJECTID", "OBJECTID7")
         val avgcloud = weatherDF1.groupBy("OBJECTID").avg("cloudcover").withColumnRenamed("OBJECTID", "OBJECTID8")
-        val weatherJoin = avgtempmax.join(avgtempmin, avgtempmax("OBJECTID1")===avgtempmin("OBJECTID2")).drop("OBJECTID1")
-            .join(avgdew, avgtempmin("OBJECTID2")===avgdew("OBJECTID3")).drop("OBJECTID2")
-            .join(avghumid, avgdew("OBJECTID3")===avghumid("OBJECTID4")).drop("OBJECTID3")
-            .join(avgprecip, avghumid("OBJECTID4")===avgprecip("OBJECTID5")).drop("OBJECTID4")
-            .join(avgwindsp, avgprecip("OBJECTID5")===avgwindsp("OBJECTID6")).drop("OBJECTID5")
-             .join(avgpress, avgwindsp("OBJECTID6")===avgpress("OBJECTID7")).drop("OBJECTID6")
-             .join(avgcloud, avgpress("OBJECTID7")===avgcloud("OBJECTID8")).drop("OBJECT7")
+        val avgradiation = weatherDF1.groupBy("OBJECTID").avg("cloudcover").withColumnRenamed("OBJECTID", "OBJECTID9")
+        val avgenergy = weatherDF1.groupBy("OBJECTID").avg("cloudcover").withColumnRenamed("OBJECTID", "OBJECTID10")
+        val avguv = weatherDF1.groupBy("OBJECTID").avg("cloudcover").withColumnRenamed("OBJECTID", "OBJECTID11")
+        val weatherJoin = avgtempmax.join(broadcast(avgtempmin), avgtempmax("OBJECTID1")===avgtempmin("OBJECTID2")).drop("OBJECTID1")
+            .join(broadcast(avgdew), avgtempmin("OBJECTID2")===avgdew("OBJECTID3")).drop("OBJECTID2")
+            .join(broadcast(avghumid), avgdew("OBJECTID3")===avghumid("OBJECTID4")).drop("OBJECTID3")
+            .join(broadcast(avgprecip), avghumid("OBJECTID4")===avgprecip("OBJECTID5")).drop("OBJECTID4")
+            .join(broadcast(avgwindsp), avgprecip("OBJECTID5")===avgwindsp("OBJECTID6")).drop("OBJECTID5")
+             .join(broadcast(avgpress), avgwindsp("OBJECTID6")===avgpress("OBJECTID7")).drop("OBJECTID6")
+             .join(broadcast(avgcloud), avgpress("OBJECTID7")===avgcloud("OBJECTID8")).drop("OBJECT7")
+             .join(broadcast(avgradiation), avgcloud("OBJECTID8")===avgradiation("OBJECTID9")).drop("OBJECT8")
+             .join(broadcast(avgenergy), avgradiation("OBJECTID9")===avgenergy("OBJECTID10")).drop("OBJECT9")
+             .join(broadcast(avguv), avgenergy("OBJECTID10")===avguv("OBJECTID11")).drop("OBJECT10")
+
         //drop objectid on column ~12
-        val joinFW = fireDF.join(weatherJoin, fireDF("OBJECTID")===weatherJoin("OBJECTID8")).drop("OBJECTID8").drop("OBJECTID").collect()
+        val joinFW = fireDF.join(weatherJoin, fireDF("OBJECTID")===weatherJoin("OBJECTID11")).drop("OBJECTID11").drop("OBJECTID").collect()
         joinFW
     }   
 
