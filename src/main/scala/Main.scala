@@ -5,6 +5,7 @@ import org.apache.spark.sql.DataFrameWriter
 import yueqi.{CorrelationMatrixOps, Chisquare, FireWeather, LogRegressionOps}
 import dataops.{DataOps, GetWeather, Sampling} 
 import abby.AbbysDataops
+import org.sparkproject.dmg.pmml.CorrelationMethods
 
 
 object Main {
@@ -21,17 +22,17 @@ object Main {
     // val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").enableHiveSupport().getOrCreate()
 
     //Master Main Space
-    //GetWeather.getWeather("dataset-offline/train/randomSample0.0002.parquet", "dataset-offline/train/randomSampleweather2.csv")
+    //GetWeather.getWeather("dataset-online/train/stratifiedSampleF2.parquet", "dataset-offline/train/stratifiedSampleW2.csv")
     
     //Yueqi's Main Space
     //Chisquare.fireSizeAndCause()
     //DataOps.createJSONFile()
     //Sampling.stratifiedSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample")
-    //Sampling.randomSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample2")
+    //Sampling.randomSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample5")
     //FireWeather.combineFireWeather()
-    
+    CorrelationMatrixOps.pearsonCorr(CorrelationMatrixOps.fireWeatherCorr("dataset-online/train/randomSampleF0.0005.parquet", "dataset-online/train/randomSampleW0.0005.csv"),"dataset-online/train/randomSampleF0.0005.parquet", "dataset-online/train/randomSampleW0.0005.csv")
     //CorrelationMatrixOps.fireWeatherCorr()
-    LogRegression.fitClassAndWeather()
+    //LogRegressionOps.fitClassAndWeather()
 
     //TestCorrelation.fireOnlyCorr()
 

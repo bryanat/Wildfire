@@ -31,21 +31,28 @@ object Chisquare {
     //  }
     // labels: class A-G
     //features: causes 1-13
-    var fireVector =  Seq(Tuple2(1, Vectors.dense(0,0,0)))
+    //var fireVector =  Seq(Tuple2(1, Vectors.dense(0,0,0)))
+    var fireVector = Seq(Tuple2(0, Vectors.dense(0,0,0)))
     val file = ssql.read.parquet("dataset-offline/train/stratifiedSampleAll3.parquet")
     file.show()
-    file.select("FIRE_SIZE_CLASS", "STAT_CAUSE_CODE").collect.foreach({row=>
+    val classNumMap = Map("A"->0, "B"->1, "C"->2, "D"->3, "E"->4, "F"->5, "G"->6) 
+    val stateMap = 
+    file.select("FIRE_SIZE_CLASS", "STAT_CAUSE_CODE", "YEAR", "STATE").collect.foreach({row=>
         var fireclass = row(0).toString
-        var cause = row(1).toString
-        var idx = cause.toDouble.toInt-1
+        var cause = row(1).toString.toDouble
+        //var idx = cause.toDouble.toInt-1
+        var year = row(2).toString.toDouble
+        var stateudf = udf((state:String=>stateMap.get(state))
+        var state = 
         if (fireclass=="A"|fireclass=="B"|fireclass=="C") {
-          fireVector = fireVector :+ Tuple2(0, Vectors.sparse(13, Array(idx), Array(1)))
+          fireVector = fireVector :+  Tuple2(0,Vectors.dense(Array(cause, year)))
+          //fireVector = fireVector :+ Tuple2(0, Vectors.sparse(13, Array(idx), Array(1)))
          }
         else if (fireclass=="D"|fireclass=="E"|fireclass=="F") {
-            fireVector = fireVector :+ Tuple2(1, Vectors.sparse(13, Array(idx), Array(1)))
+            //fireVector = fireVector :+ Tuple2(1, Vectors.sparse(13, Array(idx), Array(1)))
         }
         else if (fireclass=="G") {
-            fireVector = fireVector :+ Tuple2(2, Vectors.sparse(13, Array(idx), Array(1)))
+            //fireVector = fireVector :+ Tuple2(2, Vectors.sparse(13, Array(idx), Array(1)))
         }
       })
         // if (fireclass=="A") {
