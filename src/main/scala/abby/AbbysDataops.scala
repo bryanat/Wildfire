@@ -63,7 +63,7 @@ object AbbysDataops {
     df_fire_G_OR_YEARS.show(30)
 
   }
-  
+  //parquet files listed below
   // // parquet
   //val df = spark.read.option("multiline", true).parquet("input/fire1.parquet")
 
