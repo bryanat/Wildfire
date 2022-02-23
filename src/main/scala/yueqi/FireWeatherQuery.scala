@@ -8,39 +8,52 @@ import org.apache.spark.sql.Row
 import scala.collection.mutable.ArrayBuffer
 import org.apache.spark.sql.types._
 
+
 object FireWeatherQuery {
     val ssql = ConnectSparkSession.connect()
     import ssql.implicits._
 
 def queryFW() {
-  var fireDF = ssql.read.parquet("dataset-online/train/randomSampleF0.0002.parquet")
+
+  //data and udf
+  var fireDF = ssql.read.parquet("dataset-online/train/randomSampleF0.0002.parquet").select("OBJECTID", "STAT_CAUSE_CODE", "FIRE_NAME", "FIRE_YEAR", "FIRE_SIZE_CLASS", "FIRE_SIZE", "DISCOVERY_DOY", "CONT_DOY")
   var weather = ssql.read.csv("dataset-online/train/randomSampleW0.0002.csv")
   var weatherDF = weather.toDF("OBJECTID","name","datetime","tempmax","tempmin","temp","feelslikemax","feelslikemin","feelslike","dew","humidity","precip","precipprob","precipcover","preciptype","snow","snowdepth","windgust","windspeed","winddir",
-  "sealevelpressure","cloudcover","visibility","solarradiation","solarenergy","uvindex","severerisk")//.partitionBy(new HashPartitioner(100)).persist(MEMORY_AND_DISK_SER)
-  val weatherDF1 = weatherDF.select("OBJECTID","tempmax", "tempmin", "dew", "humidity", "precip", "windspeed", "sealevelpressure", "cloudcover", "solarradiation", "solarenergy", "uvindex").withColumn("tempmax", col("tempmax").cast(DoubleType)).withColumn("tempmin", col("tempmin").cast(DoubleType)).withColumn("dew", col("dew").cast(DoubleType)).withColumn("humidity", col("humidity").cast(DoubleType)).withColumn("precip", 
-        col("precip").cast(DoubleType)).withColumn("windspeed", col("windspeed").cast(DoubleType)).withColumn("sealevelpressure", col("sealevelpressure").cast(DoubleType)).withColumn("cloudcover", col("cloudcover").cast(DoubleType)).withColumn("solarradiation", col("solarradiation").cast(DoubleType)).withColumn("solarenergy", col("solarenergy").cast(DoubleType)).withColumn("uvindex", col("uvindex").cast(DoubleType))  
-  var joinFW = weatherDF1.join(fireDF, weatherDF("OBJECTID")===fireDF("OBJECTID")).select("FIRE_NAME", "FIRE_YEAR", "FIRE_SIZE_CLASS", "FIRE_SIZE", "STATE", "DISCOVERY_DOY","CONT_DOY",
-  "datetime", "tempmax", "tempmin", "dew", "humidity", "precip", "windspeed", "sealevelpressure", "solarradiation", "solarenergy", "uvindex")
+  "sealevelpressure","cloudcover","visibility","solarradiation","solarenergy","uvindex","severerisk")
+  val durationudf = udf((start: Int, end: Int)=>end-start) 
+  val percentageudf = udf((part: Int, total: Int)=>part.toFloat/total)
+  val monthudf = udf((date:String)=> s"${date(5)}${date(6)}".toInt)
+
+  val weatherDF1 = weatherDF.withColumn("OBJECTID", col("OBJECTID")).withColumn("precip",col("precip").cast(DoubleType)).withColumn("feelslike",col("feelslike").cast(DoubleType)).withColumnRenamed("feelslike", "heatidx").withColumnRenamed("OBJECTID", "OBJECTIDW")
+  .withColumn("month", monthudf($"datetime"))
+  val combinedDF = weatherDF1.join(fireDF, weatherDF1("OBJECTIDW")===fireDF("OBJECTID"))
+
+//monthly precipitation, heat, and fire analysis
+  //how much rain in each month, percentage of days rained in each days
+  val totalDaysDF = broadcast(weatherDF1.filter("precip is not NULL").groupBy("month").count().withColumnRenamed("month", "monthT").withColumnRenamed("count", "totaldaycounts"))                                                                                                                                                                                                                                                                                                                                              
+  val precipDaysDF = broadcast(weatherDF1.filter("precip is not NULL").filter(weatherDF1("precip")>0).groupBy("month").count().withColumnRenamed("month", "monthP").withColumnRenamed("count", "precipdaycounts"))
+  val precipAmountDF = broadcast(weatherDF1.filter("precip is not NULL").groupBy("month").sum("precip").withColumnRenamed("month", "monthA"))
+  val heatDF = broadcast(weatherDF1.filter("heatidx is not NULL").groupBy("month").avg("heatidx").withColumnRenamed("month", "monthH"))
+  val precipDF = totalDaysDF.join(precipDaysDF, totalDaysDF("monthT")===precipDaysDF("monthP")).drop("monthT")
+  .join(precipAmountDF, precipAmountDF("monthA")===precipDaysDF("monthP")).drop("monthP")
+  .join(heatDF, precipAmountDF("monthA")===heatDF("monthH")).drop("monthA").withColumnRenamed("monthH", "month")
+  //------------------------------------------------------------------------------------------------
+  //val precipSumDF = precipDF.select($"month", $"sum(precip)").orderBy(col("month").asc).show()
+   //val precipPercDF = precipDF.select($"month", percentageudf($"precipdaycounts", $"totaldaycounts")).withColumnRenamed("UDF(precipdaycounts, totaldaycounts)", "precip_duration").orderBy(col("month").asc).show()
+   //val heatAvgDF = precipDF.select($"month", $"avg(heatidx)").orderBy(col("month").asc).show()
+  // val naturalCauseDF = combinedDF.filter($"STAT_CAUSE_CODE"==="1.0").groupBy("month").count().orderBy(col("month").asc).show()
+  val bigFireDF = combinedDF.filter($"FIRE_SIZE_CLASS"==="F" && $"FIRE_SIZE_CLASS" === "G").groupBy("month").count().orderBy(col("month").asc).show()
+  //val durationDF = combinedDF.select("month", "DISCOVERY_DOY", "CONT_DOY").filter("DISCOVERY_DOY is not NULL").filter("CONT_DOY is not NULL").withColumn("fire_duration", durationudf($"DISCOVERY_DOY", $"CONT_DOY")).groupBy("month").avg("duration").orderBy(col("month").asc).show()
 
 
-  //duration trend: how long each fire lasted vs fire class and fire size
-  val durationudf = udf((start: Int, end: Int)=>end-start)
-  val duration = fireDF.filter("DISCOVERY_DOY is not NULL").filter("CONT_DOY is not NULL").withColumn("DURATION", durationudf($"DISCOVERY_DOY", $"CONT_DOY")).orderBy(col("FIRE_SIZE_CLASS").desc, col("FIRE_SIZE").desc)
-  val durationDF = duration.dropDuplicates("FIRE_NAME").select("FIRE_NAME", "FIRE_YEAR", "DURATION", "FIRE_SIZE_CLASS", "FIRE_SIZE").show()
-  //year trends: order by years, count numbers of classes
-  val yearDF = fireDF.groupBy("FIRE_YEAR", "FIRE_SIZE_CLASS").count().orderBy(col("FIRE_YEAR").desc,col("FIRE_SIZE_CLASS").desc).show()
-  //distribution trend: group by state, count number of classes
-  val stateDF = fireDF.groupBy("STATE", "FIRE_SIZE_CLASS").count().orderBy(col("FIRE_YEAR").desc,col("FIRE_SIZE_CLASS").desc).show()
-  //weather trends vs fire trends: heat index
-  //weather during class G fire: 
-  val tempDF = joinFW.groupBy("OBJECTID").avg("temp").withColumnRenamed("OBJECTID", "OBJECTID1")
-  val heatDF = joinFW.groupBy("OBJECTID").avg("humidity").withColumnRenamed("OBJECTID", "OBJECTID2")
-  val feelsDF = joinFW.groupBy("OBJECTID").avg("feelslike").withColumnRenamed("OBJECTID", "OBJECTID3").withColumnRenamed("feelslike", "heatindex")
-  val humidTempDF = tempDF.join(broadcast(heatDF), tempDF("OBJECTID1")===heatDF("OBJECTID2")).drop("OBJECTID1").join(broadcast(feelsDF), feelsDF("OBJECTID3")===heatDF("OBJECTID2")).drop("OBJECTID2").withColumnRenamed("OBJECTID3", "OBJECTID").show()
-  //val heatidxudf = udf((T:Double, RH: Double)=>-42.379 + 2.04901523*T + 10.14333127*RH - .22475541*T*RH - .00683783*T*T - .05481717*RH*RH + .00122874*T*T*RH + .00085282*T*RH*RH - .00000199*T*T*RH*RH)
-  
 
 
+  // val yearDF1 = fireDF.groupBy("FIRE_YEAR").count().orderBy(col("count").desc).show(100)
+  // val yearDF2 = fireDF.groupBy("FIRE_YEAR", "FIRE_SIZE_CLASS").count().orderBy(col("FIRE_YEAR").desc, col("FIRE_SIZE_CLASS").desc, col("count").desc).show(100)
+
+
+
+ 
 
 }
 
