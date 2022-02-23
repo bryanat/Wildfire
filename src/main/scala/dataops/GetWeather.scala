@@ -23,9 +23,6 @@ object GetWeather {
 
     import ssql.implicits._
     val df = ssql.read.option("multiline", true).parquet(readFile)
-    //df.show()
-    // df.createOrReplaceTempView("firetable")
-    // ssql.sql("SELECT * FROM firetable where FIRE_YEAR = '2005'").show()
     var weather_ListBuffer = ListBuffer[String]()
     try{
       val array = df.select("OBJECTID", "LATITUDE", "LONGITUDE","FIRE_YEAR", "DISCOVERY_DOY", "CONT_DOY").collect().foreach({row=>
@@ -35,10 +32,15 @@ object GetWeather {
         var lon = row(2).toString.toDouble
         var year = row(3).toString
         var start = dateConversion(row(3).toString, row(4).toString.toInt)
-        var end = ""
+        var end = dateConversion(row(3).toString, row(5).toString.toInt)
+        if (end<start) {
+          end= dateConversion((row(3).toString.toInt+1).toString, row(5).toString.toInt)
+        }
         //To handle nullpointerexception error, if cont_doy null, set cont_doy to discovery_doy
+        //var end = ""
         // if (row(5)==null) {
         //   end = start
+        
         // }
         // else{
         //   end = dateConversion(row(3).toString, row(5).toString.toInt)
@@ -56,7 +58,7 @@ object GetWeather {
         bufferedSource.close
       }
       catch {
-        case e: NullPointerException => println(s"$id")
+        case e: NullPointerException => println(s"$id fire skipped")
       }
     })
   }
@@ -79,7 +81,6 @@ object GetWeather {
     }
 
     def dateConversion(year:String, doy:Int): String={
-      //var dateMap = Map("2005"->1104559200, "2006"->1136095200, "2007"->1167631200, "2008"->1199167200, "2009"->1230789600, "2010"->1262325600, "2011"->1293861600, "2012"->1325397600, "2013"->1357020000, "2014"->1388556000, "2015"->1420092000)
       var start = year+"-01-01"
       var time = LocalDate.parse(start)
       var firedate = time.plus(Period.ofDays(doy-1))
@@ -87,42 +88,5 @@ object GetWeather {
     }
 }
 
-//geographic query for visualization: df entire_fire group by year, lattitude/longitude, fire size (200 classG/year, 400 classF/year, 600 classE/year...)
-//df classG_fire join with weather on date(range) and lattitude/longitude to query weather condition for class G fire
-//df fire join with weather on date(range) and latitude/longitude for query weather condition for class < C fires
 
-
-
-/*two spark ways to read file: spark.read.csv/json (creates df) or spark.sparkContext.textFile (creates RDD)
-    here I'm using RDD transformations to convert 54 columns of beverages each row representing a day's consumer counts into dense vectors
-    the dense vectors will be fed into a feature extraction model from spark mllib */
-    
-    //creates a scala 'dictionary' of coffee names
-    // var coffeedict: Map[String, Int]=Map()
-    // var coffeeNames = Source.fromFile("input/CoffeeNames.txt")
-    // var idx = 0
-    // for (line<-coffeeNames.getLines) {
-    //    coffeedict += (line -> idx)
-    //    idx+=1
-    // }
-    // coffeeNames.close
-    // var coffeeList = ArrayBuffer[Double]()
-    // for(i<-0 to 54) {
-    //   coffeeList+=0
-    // }
-    // var coffeeVector = Seq(Vectors.dense(0,0,0))
-    // import ssql.implicits._
-    // val rdd1 = ssql.sparkContext.textFile("input/CountACut.txt").map(line=>line.split(",")).map(line=>(line(0), line(1).toDouble)).reduceByKey(_+_)
-    // rdd1.persist(StorageLevel.MEMORY_ONLY_SER)
-    // rdd1.collect.foreach({ x=>
-    //     var x0 = x._1
-    //     var x1 = x._2
-    //     var idx = coffeedict.getOrElse(x0, 0)
-    //     coffeeList.update(idx, x1)
-    //   })
-    // rdd1.unpersist()
-    // println("bryan is so sweet and helpful")
-    // var v1 = Vectors.dense(coffeeList.toArray)
-    // coffeeVector = coffeeVector :+ v1
-    // println(coffeeVector.drop(1))
 

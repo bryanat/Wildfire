@@ -21,7 +21,7 @@ object CorrelationMatrixOps {
 
     def pearsonCorr(arrayWF:Array[Row], fireFile:String, weatherFile:String): Unit = {
         def defPearsonCorr(arrayWF:Array[Row]): Unit = {
-            var corrArray = Seq(Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
+            var corrArray = Seq(Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
             val x = arrayWF.foreach({row=>
                 var temp=Array(row(1).toString.toDouble, row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
                 row(6).toString.toDouble, row(7).toString.toDouble, row(8).toString.toDouble, row(9).toString.toDouble, row(10).toString.toDouble, row(11).toString.toDouble,row(12).toString.toDouble, row(13).toString.toDouble, row(14).toString.toDouble) 
@@ -41,7 +41,7 @@ object CorrelationMatrixOps {
         def spearmanCorr(arrayWF:Array[Row], fireFile:String, weatherFile:String): Unit = {
             def defSpearmanCorr(arrayWF:Array[Row]): Unit = {
                 //println(arrayWF.mkString)
-            var corrArray = Seq(Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
+            var corrArray = Seq(Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
             val x = arrayWF.foreach({row=>
                 var temp=Array(row(1).toString.toDouble, row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
                 row(6).toString.toDouble, row(7).toString.toDouble, row(8).toString.toDouble, row(9).toString.toDouble, row(10).toString.toDouble, row(11).toString.toDouble,row(12).toString.toDouble, 
