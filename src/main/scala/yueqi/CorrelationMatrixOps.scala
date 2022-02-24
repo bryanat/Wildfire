@@ -16,6 +16,7 @@ import java.time._
 object CorrelationMatrixOps {
     val ssql = ConnectSparkSession.connect()
     import ssql.implicits._
+    ssql.sparkContext.setLogLevel("ERROR")
 
 
 
@@ -40,18 +41,18 @@ object CorrelationMatrixOps {
 
         def spearmanCorr(arrayWF:Array[Row], fireFile:String, weatherFile:String): Unit = {
             def defSpearmanCorr(arrayWF:Array[Row]): Unit = {
-                //println(arrayWF.mkString)
-            var corrArray = Seq(Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
-            val x = arrayWF.foreach({row=>
-                var temp=Array(row(1).toString.toDouble, row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
-                row(6).toString.toDouble, row(7).toString.toDouble, row(8).toString.toDouble, row(9).toString.toDouble, row(10).toString.toDouble, row(11).toString.toDouble,row(12).toString.toDouble, 
-                row(13).toString.toDouble, row(14).toString.toDouble) 
-                corrArray = corrArray :+ Vectors.dense(temp) 
-            })
-            val df = corrArray.drop(1).map(Tuple1.apply).toDF("features")
-            val Row(coeff2: Matrix) = Correlation.corr(df, "features", "spearman").head
-            println("Spearman correlation matrix:\n" + coeff2.toString) 
-            }
+                println(arrayWF.mkString)
+            // var corrArray = Seq(Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
+            // val x = arrayWF.foreach({row=>
+            //     var temp=Array(row(1).toString.toDouble, row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
+            //     row(6).toString.toDouble, row(7).toString.toDouble, row(8).toString.toDouble, row(9).toString.toDouble, row(10).toString.toDouble, row(11).toString.toDouble,row(12).toString.toDouble, 
+            //     row(13).toString.toDouble, row(14).toString.toDouble) 
+            //     corrArray = corrArray :+ Vectors.dense(temp) 
+            // })
+            // val df = corrArray.drop(1).map(Tuple1.apply).toDF("features")
+            // val Row(coeff2: Matrix) = Correlation.corr(df, "features", "spearman").head
+            // println("Spearman correlation matrix:\n" + coeff2.toString) 
+             }
             defSpearmanCorr(fireWeatherCorr(fireFile,weatherFile))
     }
 
@@ -61,8 +62,10 @@ object CorrelationMatrixOps {
         //map and udf
         val fireNumMap = Map("A"->0, "B"->1, "C"->2, "D"->3, "E"->4, "F"->5, "G"->6)  
         val classudf = udf((fireclass: String)=>fireNumMap.get(fireclass))
-        val burndaysudf = udf((startdate:Int, enddate:Int)=>enddate-startdate)
-        val percentageudf = udf((part: Int, total: Int)=>(part/total).toFloat)
+        val burndaysudf = udf((startday:Int, endday:Int)=>{
+        if (endday-startday<0) {365-startday+endday}
+        else{endday-startday}})
+        val percentageudf = udf((part: Int, total: Int)=>part.toFloat/total)
         //read files and convert to dataframes
         //7 fire features: fire_size_class, fire_size, lattitude, longitude, fire_year, discovery time, burn days
         val fireDF = ssql.read.parquet(fireFile).select($"OBJECTID", classudf($"FIRE_SIZE_CLASS"),$"FIRE_SIZE", $"LATITUDE",
@@ -72,7 +75,7 @@ object CorrelationMatrixOps {
   "sealevelpressure","cloudcover","visibility","solarradiation","solarenergy","uvindex","severerisk")
         //select features and type cast
         val weatherDF1 = weatherDF.withColumn("OBJECTID", col("OBJECTID")).withColumn("tempmax", col("tempmax").cast(DoubleType)).withColumn("tempmin", col("tempmin").cast(DoubleType)).withColumn("dew", col("dew").cast(DoubleType)).withColumn("humidity", col("humidity").cast(DoubleType)).withColumn("precip", 
-        col("precip").cast(DoubleType)).withColumn("windspeed", col("windspeed").cast(DoubleType)).withColumn("sealevelpressure", col("sealevelpressure").cast(DoubleType)).withColumn("cloudcover", col("cloudcover").cast(DoubleType)).withColumn("solarradiation", col("solarradiation").cast(DoubleType)).withColumn("solarenergy", col("solarenergy").cast(DoubleType)).withColumn("uvindex", col("uvindex").cast(DoubleType)).
+        col("precip").cast(DoubleType)).withColumn("feelslike", col("feelslike").cast(DoubleType)).withColumn("windspeed", col("windspeed").cast(DoubleType)).withColumn("sealevelpressure", col("sealevelpressure").cast(DoubleType)).withColumn("cloudcover", col("cloudcover").cast(DoubleType)).withColumn("solarradiation", col("solarradiation").cast(DoubleType)).withColumn("solarenergy", col("solarenergy").cast(DoubleType)).withColumn("uvindex", col("uvindex").cast(DoubleType)).
         filter("dew is not NULL").filter("precip is not NULL").filter("cloudcover is not NULL").filter("humidity is not NULL").filter("sealevelpressure is not NULL").filter("windspeed is not NULL").filter("solarradiation is not NULL").filter("solarenergy is not NULL").filter("uvindex is not NULL")     //.withColumn("datetime", col("datetime").cast("timestamp"))
         val avgheat = weatherDF1.groupBy("OBJECTID").avg("feelslike").withColumnRenamed("OBJECTID", "OBJECTID0")
         val avgtempmax = weatherDF1.groupBy("OBJECTID").avg("tempmax").withColumnRenamed("OBJECTID", "OBJECTID1")
@@ -88,7 +91,7 @@ object CorrelationMatrixOps {
         val avguv = weatherDF1.groupBy("OBJECTID").avg("uvindex").withColumnRenamed("OBJECTID", "OBJECTID11")
         val totalDays = broadcast(weatherDF1.groupBy("OBJECTID").count().withColumnRenamed("OBJECTID", "OBJECTID12").withColumnRenamed("count", "totaldaycounts"))                                                                                                                                                                                                                                                       
         val precipDay = broadcast(weatherDF1.filter(weatherDF1("precip")>0).groupBy("OBJECTID").count().withColumnRenamed("OBJECTID", "OBJECTID13").withColumnRenamed("count", "precipdaycounts"))
-        val precipPerc = precipDay.join(totalDays, $"OBJECTID12"===$"OBJECTID13").withColumn("precipperc", percentageudf($"precipdaycounts",$"totaldaycounts")).drop("OBJECTID13").drop("totaldaycounts").drop("precipdaycounts")
+        val precipPerc = precipDay.join(totalDays, precipDay("OBJECTID13")===totalDays("OBJECTID12")).withColumn("precipperc", percentageudf($"precipdaycounts",$"totaldaycounts")).drop("OBJECTID13").drop("totaldaycounts").drop("precipdaycounts")
         //14 weather features: heat, tempmax, tempmin, dew, humid, precip, windsp, pressure, cloud, radiation, energy, uv, precipPercentage
         val weatherJoin = avgheat
             .join(broadcast(avgtempmax), avgtempmax("OBJECTID1")===avgheat("OBJECTID0")).drop("OBJECTID0")
@@ -98,11 +101,11 @@ object CorrelationMatrixOps {
             .join(broadcast(precipAmount), avghumid("OBJECTID4")===precipAmount("OBJECTID5")).drop("OBJECTID4")
             .join(broadcast(avgwindsp), precipAmount("OBJECTID5")===avgwindsp("OBJECTID6")).drop("OBJECTID5")
             .join(broadcast(avgpress), avgwindsp("OBJECTID6")===avgpress("OBJECTID7")).drop("OBJECTID6")
-            .join(broadcast(avgcloud), avgpress("OBJECTID7")===avgcloud("OBJECTID8")).drop("OBJECT7")
-            .join(broadcast(avgradiation), avgcloud("OBJECTID8")===avgradiation("OBJECTID9")).drop("OBJECT8")
-            .join(broadcast(avgenergy), avgradiation("OBJECTID9")===avgenergy("OBJECTID10")).drop("OBJECT9")
-            .join(broadcast(avguv), avgenergy("OBJECTID10")===avguv("OBJECTID11")).drop("OBJECT10")
-            .join(broadcast(precipPerc), avguv("OBJECT11")===precipPerc("OBJECT12")).drop("OBJECT11")
+            .join(broadcast(avgcloud), avgpress("OBJECTID7")===avgcloud("OBJECTID8")).drop("OBJECTID7")
+            .join(broadcast(avgradiation), avgcloud("OBJECTID8")===avgradiation("OBJECTID9")).drop("OBJECTID8")
+            .join(broadcast(avgenergy), avgradiation("OBJECTID9")===avgenergy("OBJECTID10")).drop("OBJECTID9")
+            .join(broadcast(avguv), avgenergy("OBJECTID10")===avguv("OBJECTID11")).drop("OBJECTID10")
+            .join(broadcast(precipPerc), avguv("OBJECTID11")===precipPerc("OBJECTID12")).drop("OBJECTID11")
 
         //drop objectid on column ~12
         val joinFW = fireDF.join(weatherJoin, fireDF("OBJECTID")===weatherJoin("OBJECTID12")).drop("OBJECTID12").drop("OBJECTID").collect()

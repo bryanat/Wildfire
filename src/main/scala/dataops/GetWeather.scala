@@ -31,8 +31,11 @@ object GetWeather {
         var lat = row(1).toString.toDouble
         var lon = row(2).toString.toDouble
         var year = row(3).toString
-        var start = dateConversion(row(3).toString, row(4).toString.toInt)
-        var end = dateConversion(row(3).toString, row(5).toString.toInt)
+        if (row(4).toString.toInt-14>0) {
+        var start = dateConversion(row(3).toString, row(4).toString.toInt-14)
+        var end = dateConversion(row(3).toString, row(4).toString.toInt)
+        // var start = dateConversion(row(3).toString, row(4).toString.toInt)
+        // var end = dateConversion(row(3).toString, row(5).toString.toInt)
         if (end<start) {
           end= dateConversion((row(3).toString.toInt+1).toString, row(5).toString.toInt)
         }
@@ -56,6 +59,7 @@ object GetWeather {
         first+=1
         }
         bufferedSource.close
+      }
       }
       catch {
         case e: NullPointerException => println(s"$id fire skipped")
