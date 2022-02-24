@@ -14,15 +14,15 @@ object LogRegressionOps {
     import ssql.implicits._
 
   def fitClassAndWeather(): Unit={
-      val rowArrayTrain = fireWeatherCorr("dataset-online/train/randomSampleF0.0002.parquet", "dataset-online/train/randomSampleW0.0002.csv")
-      var corrArrayTrain = Seq(Tuple2(0.toDouble, Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0)))
+      val rowArrayTrain = fireWeatherCorr("dataset-online/train/stratifiedSampleF2.parquet", "dataset-online/train/stratifiedSampleW2.csv")
+      var corrArrayTrain = Seq(Tuple2(0.toDouble, Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)))
       rowArrayTrain.foreach({row=>
         //find the fire_size_class from ID
-        var temp=Array(row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
-            row(6).toString.toDouble, row(7).toString.toDouble, row(8).toString.toDouble, row(9).toString.toDouble, row(10).toString.toDouble, row(11).toString.toDouble,row(12).toString.toDouble, row(13).toString.toDouble)
-            corrArrayTrain = corrArrayTrain :+ Tuple2(row(1).toString.toDouble, Vectors.dense(temp))
+        var temp=Array(row(0).toString.toDouble, row(1).toString.toDouble, row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
+                row(6).toString.toDouble, row(7).toString.toDouble, row(8).toString.toDouble, row(9).toString.toDouble, row(10).toString.toDouble, row(11).toString.toDouble,row(12).toString.toDouble, 
+                row(13).toString.toDouble, row(14).toString.toDouble, row(15).toString.toDouble, row(16).toString.toDouble) 
+            corrArrayTrain = corrArrayTrain :+ Tuple2(row(0).toString.toDouble, Vectors.dense(temp))
         })
-        println(corrArrayTrain.mkString)
         val training = corrArrayTrain.drop(1).toDF("label", "features")
         training.show()
         // Create a LogisticRegression instance. This instance is an Estimator.
@@ -52,13 +52,14 @@ object LogRegressionOps {
         // paramMapCombined overrides all parameters set earlier via lr.set* methods.
         val model2 = lr.fit(training, paramMapCombined)
         println("Model 2 was fit using parameters: " + model2.parent.extractParamMap)
-        val rowArrayTest = fireWeatherCorr("dataset-online/train/randomSampleF0.0005.parquet", "dataset-online/train/randomSampleW0.0005.csv")
-        var corrArrayTest = Seq(Tuple2(0.toDouble, Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0)))
+        val rowArrayTest = fireWeatherCorr("dataset-online/train/stratifiedSampleF2.parquet", "dataset-online/train/stratifiedSampleW2.csv")
+        var corrArrayTest = Seq(Tuple2(0.toDouble, Vectors.dense(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)))
         rowArrayTest.foreach({row=>
         //find the fire_size_class from ID
-        var temp=Array(row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
-            row(6).toString.toDouble, row(7).toString.toDouble, row(8).toString.toDouble, row(9).toString.toDouble, row(10).toString.toDouble, row(11).toString.toDouble,row(12).toString.toDouble, row(13).toString.toDouble)
-            corrArrayTest = corrArrayTest :+ Tuple2(row(1).toString.toDouble, Vectors.dense(temp))
+       var temp=Array(row(0).toString.toDouble, row(1).toString.toDouble, row(2).toString.toDouble, row(3).toString.toDouble, row(4).toString.toDouble, row(5).toString.toDouble,
+                row(6).toString.toDouble, row(7).toString.toDouble, row(8).toString.toDouble, row(9).toString.toDouble, row(10).toString.toDouble, row(11).toString.toDouble,row(12).toString.toDouble, 
+                row(13).toString.toDouble, row(14).toString.toDouble, row(15).toString.toDouble, row(16).toString.toDouble) 
+            corrArrayTest = corrArrayTest :+ Tuple2(row(0).toString.toDouble, Vectors.dense(temp))
         })
         val test = corrArrayTest.drop(1).toDF("label", "features")
         model2.transform(test)
