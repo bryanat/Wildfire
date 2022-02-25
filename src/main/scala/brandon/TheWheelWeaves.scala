@@ -3,7 +3,7 @@ import contexts.ConnectSparkSession
 import org.apache.spark.sql._
 import org.apache.spark.sql.connector.expressions._
 import org.apache.spark.sql.functions
-import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.functions.{col, udf}
 
 
 object TheWheelWeaves {
@@ -32,11 +32,11 @@ object TheWheelWeaves {
         "FIRE_NAME",
         "OBJECTID")
 
-      // -----------------------------------------------------------------------------------------
+ /*     // -----------------------------------------------------------------------------------------
       // BRANDON DF SUMMARIZE STATEMENTS BELOW
       //(1) Top 10 causes of Wildfires in the US
     //Key: 1 Lightning, 2 Equipment, 3 Smoking, 4 Campfire, 5 Debris Burning, 6 Railroad, 7 Arson, 8 Children, 9 Misc, 10 Firework, 11 Powerline, 12 Structure, 13 Missing/Undefined
-    df_fire.groupBy("STAT_CAUSE_CODE").count().withColumnRenamed("count", "US_TOTAL-FIRES_BY_CAUSE").show(10)
+    df_fire.groupBy("STAT_CAUSE_CODE").count().orderBy(col("FIRE_SIZE_CLASS")).withColumnRenamed("count", "US_TOTAL-FIRES_BY_CAUSE").show(10)
     //-----------
     // (2) Top three states with the highest number of fires from 1992-2015
     df_fire.groupBy("STATE").count().orderBy(col("count").desc).withColumnRenamed("count", "US_TOTAL-FIRES").show(3)
@@ -71,6 +71,23 @@ object TheWheelWeaves {
     //TX QUERY (ARSON)
     df_fire.where(df_fire("STATE") === "TX" && df_fire("STAT_CAUSE_CODE") === "7.0").groupBy(   "FIRE_YEAR").count().orderBy(col("FIRE_YEAR").desc).withColumnRenamed("count", "TX_ARSONS_BY_YEAR").show(999)
     df_fire.where(df_fire("STATE") === "TX" && df_fire("STAT_CAUSE_CODE") === "7.0").groupBy(  "FIRE_SIZE_CLASS").count().orderBy(col("FIRE_SIZE_CLASS").desc).withColumnRenamed("count", "TX_ARSONS_BY_CLASS").show(999)
+    // ------------------------------------------------------------------------
+*/
+
+    //BROADCAST
+    val df_StatePopulation = ssql.read.option("multiline","true").json("dataset/statepopulation.json")
+    df_StatePopulation.show()
+    ssql.sparkContext.broadcast(df_StatePopulation)
+    //BROADCAST JOIN to add population column by state
+   var df_broadcastJoined = df_fire.join(df_StatePopulation, df_fire("STATE") === df_StatePopulation("State"))
+   val df_arson = df_fire.where(df_fire("STAT_CAUSE_CODE") === "7.0").groupBy("STATE").count().withColumnRenamed("STATE", "States")
+    //create lambda func as a udf
+    val arsonPerCapitaUDF = udf((arson : Int, population : Int) => {
+      val arsonPerCapita = arson / population
+      arsonPerCapita
+    })
+    //add arson column
+    df_broadcastJoined.join(df_arson, df_broadcastJoined("STATE") === df_arson("States")).select(df_broadcastJoined("STATE"), arsonPerCapitaUDF(df_arson("count"), df_broadcastJoined("Population"))).show(50)
 
   }
 
