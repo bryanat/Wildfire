@@ -38,7 +38,10 @@ object DataOps {
     //df_Wildfire_G.write.parquet("dataset-offline/train/fireALL")
   }
 
-
+// def createPopulationDF(): Unit={
+//   val populationDF = ssql.read.csv("data-online/train/statepopulation.csv").toDF("STATE1", "POPULATION")
+  //val joinedFirePopulation = fireDF.join(broadcast(populationDF), fireDF("STATE")===populationDF('STATE1)).drop("STATE1")
+//}
 
 //Need Unix_Timestamp_Seconds column generated from a udp on the two Wildfire columns FIRE_YEAR & DISCOVERY_DOY
 def udp_Calc_Unix_Timestamp_Seconds(fire_year: Int, discover_doy: Int): Int = {

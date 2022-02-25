@@ -1,15 +1,12 @@
 import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
-import yueqi.Chisquare
-import yueqi.TestCorrelation
-import yueqi.FireWeather
-import abby.Whatever
 import org.apache.spark.sql.DataFrameWriter
-// import org.apache.spark.sql.SparkSession.implicits._
-import dataops.{GetWeather, DataOps, Sampling, QueryFire}
+import yueqi.{CorrelationMatrixOps, Chisquare, FireWeatherQuery, LogRegressionOps}
+import dataops.{DataOps, GetWeather, Sampling} 
 import abby.AbbysDataops
-
+import org.sparkproject.dmg.pmml.CorrelationMethods
+import yueqi.Stream
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -25,15 +22,20 @@ object Main {
     // val ssql = SparkSession.builder().appName("Wildfire").config("spark.master", "local").config("spark.driver.memory", "4g").enableHiveSupport().getOrCreate()
 
     //Master Main Space
-    //GetWeather.getWeather("dataset-offline/train/randomSample0.0002.parquet", "dataset-offline/train/randomSampleweather2.csv")
-    
-    //Yueqi's Main Space
-    //Chisquare.fireSizeAndCause()
     //DataOps.createJSONFile()
+    GetWeather.getWeather("dataset-offline/train/stratifiedSampleF3.parquet", "dataset-offline/train/stratifiedSampleW3.csv") 
+    //GetWeather.getWeather("dataset-offline/train/fireG10.parquet", "dataset-offline/train/fireG10.csv") 
     //Sampling.stratifiedSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample")
-    //Sampling.randomSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample2")
-    //FireWeather.combineFireWeather()
-    TestCorrelation.fireWeatherCorr()
+    //Sampling.randomSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample5")
+
+    //Yueqi's Main Space
+    //Chisquare.fireStateChi()
+    //Chisquare.fireCauseChi()
+    //CorrelationMatrixOps.pearsonCorr(CorrelationMatrixOps.fireWeatherCorr("dataset-online/train/stratifiedSampleF2.parquet", "dataset-online/train/stratifiedSampleW2.csv"),"dataset-online/train/stratifiedSampleF2.parquet", "dataset-online/train/stratifiedSampleW2.csv")
+    //LogRegressionOps.fitClassAndWeather()
+    //FireWeatherQuery.queryFW()
+    //Stream.stream()
+
 
 
     
@@ -42,6 +44,5 @@ object Main {
 
     //Brandon's Main Space
 
-    QueryFire.queryTexas()
   }
 }
