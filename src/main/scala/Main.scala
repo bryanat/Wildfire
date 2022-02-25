@@ -2,13 +2,15 @@ import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
 import org.apache.spark.sql.DataFrameWriter
-import yueqi.{CorrelationMatrixOps, Chisquare, FireWeatherQuery, LogRegressionOps}
 import dataops.{DataOps, GetWeather, Sampling} 
+import yueqi.{CorrelationMatrixOps, Chisquare, FireWeatherQuery, LogRegressionOps}
 import abby.AbbysDataops
+import brandon.TheWheelWeaves
 import org.sparkproject.dmg.pmml.CorrelationMethods
 
 object Main {
   def main(args: Array[String]): Unit = {
+
     //System.setProperty("hadoop.home.dir", "C:\\hadoop")
     
     // val sconf = new SparkConf().setMaster("local[4]").setAppName("Wildfire").setSparkHome("C:\\Spark")
@@ -22,7 +24,7 @@ object Main {
 
     //Master Main Space
     //DataOps.createJSONFile()
-    GetWeather.getWeather("dataset-offline/train/stratifiedSampleF3.parquet", "dataset-offline/train/stratifiedSampleW3.csv") 
+    //GetWeather.getWeather("dataset-offline/train/stratifiedSampleF3.parquet", "dataset-offline/train/stratifiedSampleW3.csv") 
     //GetWeather.getWeather("dataset-offline/train/fireG10.parquet", "dataset-offline/train/fireG10.csv") 
     //Sampling.stratifiedSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample")
     //Sampling.randomSampling("dataset-online/train/WildfireAll.parquet", "dataset-offline/train/sample5")
@@ -34,14 +36,12 @@ object Main {
     //LogRegressionOps.fitClassAndWeather()
     //FireWeatherQuery.queryFW()
     //Stream.stream()
-
-
-
     
     //Abby's Main Space
     //AbbysDataops.runSummaryStatements()
 
     //Brandon's Main Space
+    //TheWheelWeaves.asTheWheelWills()
 
   }
 }
