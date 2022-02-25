@@ -1,9 +1,9 @@
 .bloop
-.bsp
-.idea
 .metals
 .vscode
-dataset
+.bsp
+.idea
+dataset-offline
 metastore_db
 project
 spark-warehouse
