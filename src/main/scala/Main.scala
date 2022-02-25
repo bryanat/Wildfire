@@ -8,7 +8,6 @@ import abby.AbbysDataops
 import org.sparkproject.dmg.pmml.CorrelationMethods
 import yueqi.Stream
 
-
 object Main {
   def main(args: Array[String]): Unit = {
     //System.setProperty("hadoop.home.dir", "C:\\hadoop")
@@ -45,6 +44,5 @@ object Main {
 
     //Brandon's Main Space
 
-    // Test commit
   }
 }

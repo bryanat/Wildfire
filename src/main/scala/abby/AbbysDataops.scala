@@ -24,9 +24,46 @@ object AbbysDataops {
       "OBJECTID")
 
     //UNDERNEATH IS MY DF SUMMARY STATEMENTS
-    df_fire.groupBy("STATE").count().orderBy("count").show(1000)
+    //df_fire.groupBy("STATE").count().orderBy("count").show(1000)
+
+    //query to select all Class G fires
+    df_fire.where(df_fire("FIRE_SIZE_CLASS") ==="G" ).show(30)
+
+    //query Class G by California
+    df_fire.where(df_fire("FIRE_SIZE_CLASS") ==="G" ).where(df_fire("STATE") === "CA").show(30)
+
+    //query number of Class G fires in California by year
+    df_fire.where(df_fire("FIRE_SIZE_CLASS") ==="G" ).where(df_fire("STATE") === "CA").groupBy(df_fire("FIRE_YEAR")).count().orderBy("FIRE_YEAR").show(30)
+    //Note: There were 52 Class G fires In California in 2008; this will be good to graph
+
+    //query total number of California fires by year
+    df_fire.where(df_fire("STATE") === "CA").groupBy(df_fire("FIRE_YEAR")).count().orderBy("FIRE_YEAR").show(30)
+
+    //query number of large fires in California by year
+    df_fire.where(df_fire("FIRE_SIZE_CLASS") =!="A" && df_fire("FIRE_SIZE_CLASS") =!="B" && df_fire("FIRE_SIZE_CLASS") =!="C" ).where(df_fire("STATE") === "CA").groupBy(df_fire("FIRE_YEAR")).count().orderBy("FIRE_YEAR").show(30)
+
+
+    ////////////////////////////////////////////////
+
+
+    //query to select all Class G fires
+   var df_fire_G = df_fire.where(df_fire("FIRE_SIZE_CLASS") ==="G" )
+
+    //query Class G by Oregon
+    //df_fire.where(df_fire("FIRE_SIZE_CLASS") ==="G" ).where(df_fire("STATE") === "OR")
+    var df_fire_G_OR = df_fire_G.where(df_fire("STATE") === "OR")
+
+
+    //query number of Class G fires in Oregon by year
+    //df_fire.where(df_fire("FIRE_SIZE_CLASS") ==="G" ).where(df_fire("STATE") === "OR").groupBy(df_fire("FIRE_YEAR")).count().orderBy("FIRE_YEAR")
+    var df_fire_G_OR_YEARS = df_fire_G_OR.groupBy(df_fire("FIRE_YEAR")).count().orderBy("FIRE_YEAR")
+
+    df_fire_G.show(30)
+    df_fire_G_OR.show(30)
+    df_fire_G_OR_YEARS.show(30)
+
   }
-  
+  //parquet files listed below
   // // parquet
   //val df = spark.read.option("multiline", true).parquet("input/fire1.parquet")
 
