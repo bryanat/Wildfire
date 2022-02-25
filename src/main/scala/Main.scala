@@ -6,7 +6,6 @@ import yueqi.{CorrelationMatrixOps, Chisquare, FireWeatherQuery, LogRegressionOp
 import dataops.{DataOps, GetWeather, Sampling} 
 import abby.AbbysDataops
 import org.sparkproject.dmg.pmml.CorrelationMethods
-import yueqi.Stream
 
 object Main {
   def main(args: Array[String]): Unit = {
