@@ -76,18 +76,21 @@ object TheWheelWeaves {
 
     //BROADCAST
     val df_StatePopulation = ssql.read.option("multiline","true").json("dataset/statepopulation.json")
-    df_StatePopulation.show()
+    //df_StatePopulation.show()
     ssql.sparkContext.broadcast(df_StatePopulation)
     //BROADCAST JOIN to add population column by state
-   var df_broadcastJoined = df_fire.join(df_StatePopulation, df_fire("STATE") === df_StatePopulation("State"))
+   var df_broadcastJoined = df_fire.join(df_StatePopulation, df_fire("STATE") === df_StatePopulation("State")).drop(df_fire("STATE"))
    val df_arson = df_fire.where(df_fire("STAT_CAUSE_CODE") === "7.0").groupBy("STATE").count().withColumnRenamed("STATE", "States")
     //create lambda func as a udf
-    val arsonPerCapitaUDF = udf((arson : Int, population : Int) => {
-      val arsonPerCapita = arson / population
-      arsonPerCapita
+    val arsonIndexUDF = udf((arson : Int, population : Int) => {
+    // arsonIndex is arson per capita normalized to two digits with * 10,000
+      val arsonIndex = (arson.toFloat / population)*10000
+      arsonIndex
     })
-    //add arson column
-    df_broadcastJoined.join(df_arson, df_broadcastJoined("STATE") === df_arson("States")).select(df_broadcastJoined("STATE"), arsonPerCapitaUDF(df_arson("count"), df_broadcastJoined("Population"))).show(50)
+      //add arson column
+    df_broadcastJoined.join(df_arson, df_broadcastJoined("STATE") === df_arson("States"))
+      .select(df_broadcastJoined("STATE"), arsonIndexUDF(df_arson("count"), df_broadcastJoined("Population")).alias("ArsonIndex_UDF"))
+      .distinct().orderBy(col("ArsonIndex_UDF").desc).show(50)
 
   }
 
