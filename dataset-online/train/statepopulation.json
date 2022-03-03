@@ -1,0 +1,202 @@
+[
+    {
+      "State": "AL",
+      "Population": 5024279
+    },
+    {
+      "State": "AK",
+      "Population": 733391
+    },
+    {
+      "State": "AZ",
+      "Population": 7151502
+    },
+    {
+      "State": "AR",
+      "Population": 3011524
+    },
+    {
+      "State": "CA",
+      "Population": 39538223
+    },
+    {
+      "State": "CO",
+      "Population": 5773714
+    },
+    {
+      "State": "CT",
+      "Population": 3605944
+    },
+    {
+      "State": "DE",
+      "Population": 989948
+    },
+    {
+      "State": "FL",
+      "Population": 21538187
+    },
+    {
+      "State": "GA",
+      "Population": 10711908
+    },
+    {
+      "State": "HI",
+      "Population": 1455271
+    },
+    {
+      "State": "ID",
+      "Population": 1839106
+    },
+    {
+      "State": "IL",
+      "Population": 12801989
+    },
+    {
+      "State": "IN",
+      "Population": 6785528
+    },
+    {
+      "State": "IA",
+      "Population": 3271616
+    },
+    {
+      "State": "KS",
+      "Population": 2937880
+    },
+    {
+      "State": "KY",
+      "Population": 4505836
+    },
+    {
+      "State": "LA",
+      "Population": 4657757
+    },
+    {
+      "State": "ME",
+      "Population": 1362359
+    },
+    {
+      "State": "MD",
+      "Population": 6177224
+    },
+    {
+      "State": "MA",
+      "Population": 7029917
+    },
+    {
+      "State": "MI",
+      "Population": 10077331
+    },
+    {
+      "State": "MN",
+      "Population": 5706494
+    },
+    {
+      "State": "MS",
+      "Population": 2961279
+    },
+    {
+      "State": "MO",
+      "Population": 6154913
+    },
+    {
+      "State": "MT",
+      "Population": 1084225
+    },
+    {
+      "State": "NE",
+      "Population": 1961504
+    },
+    {
+      "State": "NV",
+      "Population": 3104614
+    },
+    {
+      "State": "NH",
+      "Population": 1377529
+    },
+    {
+      "State": "NJ",
+      "Population": 9288994
+    },
+    {
+      "State": "NM",
+      "Population": 2117522
+    },
+    {
+      "State": "NY",
+      "Population": 20201249
+    },
+    {
+      "State": "NC",
+      "Population": 10439388
+    },
+    {
+      "State": "ND",
+      "Population": 779094
+    },
+    {
+      "State": "OH",
+      "Population": 11799448
+    },
+    {
+      "State": "OK",
+      "Population": 3959353
+    },
+    {
+      "State": "OR",
+      "Population": 4237256
+    },
+    {
+      "State": "PA",
+      "Population": 13002700
+    },
+    {
+      "State": "RI",
+      "Population": 1097379
+    },
+    {
+      "State": "SC",
+      "Population": 5118425
+    },
+    {
+      "State": "SD",
+      "Population": 886667
+    },
+    {
+      "State": "TN",
+      "Population": 6910840
+    },
+    {
+      "State": "TX",
+      "Population": 29145505
+    },
+    {
+      "State": "UT",
+      "Population": 3205958
+    },
+    {
+      "State": "VT",
+      "Population": 643077
+    },
+    {
+      "State": "VA",
+      "Population": 8631393
+    },
+    {
+      "State": "WA",
+      "Population": 7705281
+    },
+    {
+      "State": "WV",
+      "Population": 1793716
+    },
+    {
+      "State": "WI",
+      "Population": 5893718
+    },
+    {
+      "State": "WY",
+      "Population": 576851
+    }
+  ]
