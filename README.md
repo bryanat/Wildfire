@@ -59,3 +59,28 @@
 - Stream in timestamp data as if it was in Realtime
 - Cut and sort .csv in order of time, then stream in through a StreamContext into a DStream
 - Use rest of logic with RDD transformations and analytics
+
+
+
+![](dataset-online/wildfire-ppt-images/wf1.jpg)
+![](dataset-online/wildfire-ppt-images/wf2.jpg)
+![](dataset-online/wildfire-ppt-images/wf3.jpg)
+![](dataset-online/wildfire-ppt-images/wf4.jpg)
+![](dataset-online/wildfire-ppt-images/wf5.jpg)
+![](dataset-online/wildfire-ppt-images/wf6.jpg)
+![](dataset-online/wildfire-ppt-images/wf7.jpg)
+![](dataset-online/wildfire-ppt-images/wf8.jpg)
+![](dataset-online/wildfire-ppt-images/wf9.jpg)
+![](dataset-online/wildfire-ppt-images/wf10.jpg)
+![](dataset-online/wildfire-ppt-images/wf11.jpg)
+![](dataset-online/wildfire-ppt-images/wf12.jpg)
+![](dataset-online/wildfire-ppt-images/wf13.jpg)
+![](dataset-online/wildfire-ppt-images/wf14.jpg)
+![](dataset-online/wildfire-ppt-images/wf15.jpg)
+![](dataset-online/wildfire-ppt-images/wf16.jpg)
+![](dataset-online/wildfire-ppt-images/wf17.jpg)
+![](dataset-online/wildfire-ppt-images/wf18.jpg)
+![](dataset-online/wildfire-ppt-images/wf19.jpg)
+![](dataset-online/wildfire-ppt-images/wf20.jpg)
+![](dataset-online/wildfire-ppt-images/wf21.jpg)
+![](dataset-online/wildfire-ppt-images/wf21.jpg)
