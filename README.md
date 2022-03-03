@@ -1,7 +1,9 @@
 # Wildfire (P2 Spark)
 
-# Agile/Scrum
+### Agile/Scrum
 - https://trello.com/b/YjETnJ2h/p2-scrum-agile
+
+![](dataset-online/wildfire-ppt-images/wf2.jpg)
 
 ### Project Members (Group A)
 - Bryan Boyett
@@ -83,4 +85,4 @@
 ![](dataset-online/wildfire-ppt-images/wf19.jpg)
 ![](dataset-online/wildfire-ppt-images/wf20.jpg)
 ![](dataset-online/wildfire-ppt-images/wf21.jpg)
-![](dataset-online/wildfire-ppt-images/wf21.jpg)
+![](dataset-online/wildfire-ppt-images/wf22.jpg)
