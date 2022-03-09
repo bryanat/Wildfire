@@ -6,8 +6,8 @@ import org.apache.spark.sql.functions
 import org.apache.spark.sql.functions.{col, udf}
 
 
-object TheWheelWeaves {
-  def asTheWheelWills(): Unit = {
+object BQueries {
+  def startBQueries(): Unit = {
 
     val ssql = ConnectSparkSession.connect()
 
@@ -32,7 +32,7 @@ object TheWheelWeaves {
         "FIRE_NAME",
         "OBJECTID")
 
- /*     // -----------------------------------------------------------------------------------------
+      // -----------------------------------------------------------------------------------------
       // BRANDON DF SUMMARIZE STATEMENTS BELOW
       //(1) Top 10 causes of Wildfires in the US
     //Key: 1 Lightning, 2 Equipment, 3 Smoking, 4 Campfire, 5 Debris Burning, 6 Railroad, 7 Arson, 8 Children, 9 Misc, 10 Firework, 11 Powerline, 12 Structure, 13 Missing/Undefined
@@ -72,7 +72,7 @@ object TheWheelWeaves {
     df_fire.where(df_fire("STATE") === "TX" && df_fire("STAT_CAUSE_CODE") === "7.0").groupBy(   "FIRE_YEAR").count().orderBy(col("FIRE_YEAR").desc).withColumnRenamed("count", "TX_ARSONS_BY_YEAR").show(999)
     df_fire.where(df_fire("STATE") === "TX" && df_fire("STAT_CAUSE_CODE") === "7.0").groupBy(  "FIRE_SIZE_CLASS").count().orderBy(col("FIRE_SIZE_CLASS").desc).withColumnRenamed("count", "TX_ARSONS_BY_CLASS").show(999)
     // ------------------------------------------------------------------------
-*/
+
 
     //BROADCAST
     val df_StatePopulation = ssql.read.option("multiline","true").json("dataset/statepopulation.json")
